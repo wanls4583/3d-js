@@ -11,10 +11,11 @@
 </body>
 <script type="module">
     import myMatrix4 from './Matrix4.js'
+    import { printMtrix } from './MathUtils.js'
     import { Matrix4 } from '../../three.module.js'
     let arr = [
         0.5, 0.5, 0.3, 0, 
-        .5, 0.7, 0, 0,
+        0.5, 0.7, 0, 0,
         0.6, 0.6, 0.9, 0,
         0, 0, 0, 1,
     ]
@@ -24,5 +25,9 @@
 
     console.log(m1.determinant())
     console.log(m2.determinant())
+
+    printMtrix(m1.invert(), 'm1')
+    printMtrix(m2.invert(), 'm2')
+    
 </script>
 </html>
