@@ -72,8 +72,26 @@ export default class {
         return this
     }
     lookAt(eye, target, up) {
-        let z = eye.clone().sub(target).normalize()
-        let x = up.clone().cross(z).normalize()
+        let z = eye.clone().sub(target)
+
+        // eye与target在同一个点
+        if(z.lengthSq() === 0) {
+            z.z = 1
+        }
+
+        z.normalize()
+
+        let x = up.clone().cross(z)
+
+        // x与z平行
+        if(x.lengthSq() === 0) {
+            z.z += 0.0001
+            z.normalize()
+            x = up.clone().cross(z)
+        }
+
+        x.normalize()
+
         let y = z.clone().cross(x)
 
         this.fromArray([...x, 0, ...y, 0, ...z, 0, 0, 0, 0, 1])
@@ -107,6 +125,9 @@ export default class {
         te[15] = 1
 
         return this
+    }
+    makeOrthographic() {
+
     }
     set(n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44) {
         const te = this.elements;
