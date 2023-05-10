@@ -124,11 +124,14 @@ function printMtrix(mt, title = 'matrix') {
     console.log(title)
     arrs.forEach(arr => {
         arr = arr.map(num => {
-            num = num.toFixed(4)
-            num = num == '-' ? num : ' ' + num
+            num = num.toFixed(6)
+            num = num[0] == '-' ? num : ' ' + num
+            for(let i = 0, len = 12 - num.length; i < len; i++) {
+                num += ' '
+            }
             return num
         })
-        let rowStr = arr.join('    ')
+        let rowStr = arr.join('')
         console.log(rowStr)
         str.push(rowStr)
     })

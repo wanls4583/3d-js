@@ -10,7 +10,7 @@
     
 </body>
 <script type="module">
-    import myMatrix4 from './Matrix4.js'
+    import MyMatrix4 from './Matrix4.js'
     import { printMtrix } from './MathUtils.js'
     import { Matrix4, Vector3 } from '../../three.module.js'
     let arr = [
@@ -21,20 +21,33 @@
     ]
     
     let m1 = new Matrix4().fromArray(arr.slice())
-    let m2 = new myMatrix4().fromArray(arr.slice())
+    let m2 = new MyMatrix4().fromArray(arr.slice())
 
+    console.log('\ndeterminant：\n\n')
     console.log(m1.determinant())
     console.log(m2.determinant())
 
-    printMtrix(m1.invert(), 'm1')
-    printMtrix(m2.invert(), 'm2')
+    console.log('\ninvert：\n\n')
+    printMtrix(m1.clone().invert(), 'm1')
+    printMtrix(m2.clone().invert(), 'm2')
+    
+    
+    console.log('\nlookAt：\n\n')
 
     let eye = new Vector3(0.1, 0.2, 0.5)
     let target = new Vector3(0.2, 0, 0)
     let up = new Vector3(0, 1, 0)
 
     printMtrix(new Matrix4().lookAt(eye, target, up), 'look1')
-    printMtrix(new myMatrix4().lookAt(eye, target, up), 'look2')
-    
+    printMtrix(new MyMatrix4().lookAt(eye, target, up), 'look2')
+
+    console.log('\nmakeRotationAxis：\n\n')
+
+    let axis = new Vector3(1, 1, 1).normalize()
+    let angle = Math.PI / 6
+
+    printMtrix(new Matrix4().makeRotationAxis(axis, angle), 'makeRotationAxis1')
+    printMtrix(new MyMatrix4().makeRotationAxis(axis, angle), 'makeRotationAxis2')
+
 </script>
 </html>
