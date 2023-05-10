@@ -144,4 +144,9 @@ export default class {
         this.z = a.z - b.z
         return this
     }
+    *[Symbol.iterator]() {
+        yield this.x;
+        yield this.y;
+        yield this.z;
+    }
 }

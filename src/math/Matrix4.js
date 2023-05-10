@@ -57,6 +57,22 @@ export default class {
     invert() {
         return new this.constructor().fromArray(invertMatrix(this.elements))
     }
+    identity() {
+        this.set(
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1
+        )
+    }
+    lookAt(eye, target, up) {
+        let z = eye.clone().sub(target).normalize()
+        let x = up.clone().cross(z).normalize()
+        let y = z.clone().cross(x)
+        this.fromArray([...x, 0, ...y, 0, ...z, 0, 0, 0, 0, 1])
+        this.invert()
+        return this
+    }
     set(n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44) {
         const te = this.elements;
         te[0] = n11; te[4] = n12; te[8] = n13; te[12] = n14;
