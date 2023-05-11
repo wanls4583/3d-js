@@ -49,5 +49,9 @@
     printMtrix(new Matrix4().makeRotationAxis(axis, angle), 'makeRotationAxis1')
     printMtrix(new MyMatrix4().makeRotationAxis(axis, angle), 'makeRotationAxis2')
 
+    console.log('\makeOrthographic：\n\n')
+
+    printMtrix(new Matrix4().makeOrthographic(-10, -4, 4, 1, -1, 4), 'makeOrthographi1')
+    printMtrix(new MyMatrix4().makeOrthographic(-10, -4, 4, 1, -1, 4), 'makeOrthographic2')
 </script>
 </html>

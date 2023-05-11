@@ -1,4 +1,5 @@
 import { invertMatrix } from './MathUtils.js'
+import Vector3 from './Vector3.js'
 export default class {
     constructor() {
         const te = []
@@ -75,7 +76,7 @@ export default class {
         let z = eye.clone().sub(target)
 
         // eye与target在同一个点
-        if(z.lengthSq() === 0) {
+        if (z.lengthSq() === 0) {
             z.z = 1
         }
 
@@ -84,7 +85,7 @@ export default class {
         let x = up.clone().cross(z)
 
         // x与z平行
-        if(x.lengthSq() === 0) {
+        if (x.lengthSq() === 0) {
             z.z += 0.0001
             z.normalize()
             x = up.clone().cross(z)
@@ -126,8 +127,24 @@ export default class {
 
         return this
     }
-    makeOrthographic() {
+    makeOrthographic(left, right, top, bottom, near, far) {
+        near = -near
+        far = -far
 
+        let xs = 2 / (right - left)
+        let ys = 2 / (top - bottom)
+        let zs = 2 / (far - near)
+
+        let xw = -(left + right) / 2 * xs
+        let yw = -(top + bottom) / 2 * ys
+        let zw = -(near + far) / 2 * zs
+
+        return this.fromArray([
+            xs, 0, 0, 0,
+            0, ys, 0, 0,
+            0, 0, zs, 0,
+            xw, yw, zw, 1
+        ])
     }
     set(n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44) {
         const te = this.elements;

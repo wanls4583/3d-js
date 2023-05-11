@@ -1,4 +1,4 @@
-import MathUtils from './MathUtils'
+import * as MathUtils from './MathUtils.js'
 
 export default class {
     constructor(x = 0, y = 0, z = 0) {
