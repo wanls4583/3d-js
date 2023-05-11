@@ -118,6 +118,19 @@ function invertMatrix(te) {
     }
 }
 
+function multiplyComplex(cx1, cx2) {
+    // (w1 + x1i + y1i + z1i) *
+    // (w2 + x2i + y2i + z2i)
+    // =
+    // w1*w2 + w1*x2i + w1*y2i + w1*z2i +
+    // x1i*w2 + x1i*x2i + x1i*y2i + x1i*z2i +
+    // y1i*w2 + y1i*x2i + y1i*y2i + y1i*z2i +
+    // z1i*w2 + z1i*x2i + z1i*y2i + z1i*z2i +
+    // =
+    // w1 * w2 + (w1*x2 + w1*y2 + w1*z2 + w2*x1 + w2*y1 + w2*z1)i + 
+    // -(x1*x2 + x1*y2 + x1*z3 + y1*x2 + y1*y2 + y1*z2 + z1*x2 + z1*y2 + z1*z2)
+}
+
 function printMtrix(mt, title = 'matrix') {
     let arrs = matrixToRowCol(mt.elements)
     let str = []
