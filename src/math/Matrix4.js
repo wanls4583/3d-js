@@ -146,6 +146,27 @@ export default class {
             xw, yw, zw, 1
         ])
     }
+    makePerspective(left, right, top, bottom, near, far) {
+        // -nA + B = n*n
+        // -fA + B = f*f
+        // =>
+        // A = -(n+f)
+        // B = nf
+        // 2/(r-l)   0     0     -(r+l)/(r-l)
+        // 0      2/(t-b)  0     -(t+b)/(t-b)
+        // 0         0   2/(n-f) (n+f)/(n-f)
+        // 0         0     0           1
+        // *
+        // n   0   0   0
+        // 0   n   0   0
+        // 0   0  n+f nf
+        // 0   0  -1   0
+        // =>
+        // 2n/(r-l)   0      (r+l)/(r-l)   0
+        // 0       2n/(t-b)  (t+b)/(t-b)   0
+        // 0          0      (n+f)/(n-f)   2nf/(n-f)
+        // 0          0           -1       0
+    }
     set(n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44) {
         const te = this.elements;
 
