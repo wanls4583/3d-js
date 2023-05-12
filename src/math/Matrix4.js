@@ -147,10 +147,10 @@ export default class {
         ])
     }
     makePerspective(left, right, top, bottom, near, far) {
-        // -nA + B = n*n
-        // -fA + B = f*f
+        // nA + B = n*n
+        // fA + B = f*f
         // =>
-        // A = -(n+f)
+        // A = n+f
         // B = nf
         // 2/(r-l)   0     0     -(r+l)/(r-l)
         // 0      2/(t-b)  0     -(t+b)/(t-b)
