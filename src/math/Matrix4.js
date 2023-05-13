@@ -147,8 +147,8 @@ export default class {
         ])
     }
     makePerspective(left, right, top, bottom, near, far) {
-        // nA + B = n*n
-        // fA + B = f*f
+        // -nA + B = -n*n
+        // -fA + B = -f*f
         // =>
         // A = n+f
         // B = nf
@@ -166,6 +166,50 @@ export default class {
         // 0       2n/(t-b)  (t+b)/(t-b)   0
         // 0          0      (n+f)/(n-f)   2nf/(n-f)
         // 0          0           -1       0
+        const m = new this.constructor().set(
+            near, 0, 0, 0,
+            0, near, 0, 0,
+            0, 0, near + far, near * far,
+            0, 0, -1, 0,
+        )
+        this.makeOrthographic(left, right, top, bottom, near, far).multiply(m)
+
+        return this
+    }
+    multiply(m) {
+        const te = this.elements
+        const n11 = te[0], n12 = te[4], n13 = te[8], n14 = te[12]
+        const n21 = te[1], n22 = te[5], n23 = te[9], n24 = te[13]
+        const n31 = te[2], n32 = te[6], n33 = te[10], n34 = te[14]
+        const n41 = te[3], n42 = te[7], n43 = te[11], n44 = te[15]
+
+        const te1 = m.elements
+        const m11 = te1[0], m12 = te1[4], m13 = te1[8], m14 = te1[12]
+        const m21 = te1[1], m22 = te1[5], m23 = te1[9], m24 = te1[13]
+        const m31 = te1[2], m32 = te1[6], m33 = te1[10], m34 = te1[14]
+        const m41 = te1[3], m42 = te1[7], m43 = te1[11], m44 = te1[15]
+
+        te[0] = n11 * m11 + n12 * m21 + n13 * m31 + n14 * m41
+        te[1] = n21 * m11 + n22 * m21 + n23 * m31 + n24 * m41
+        te[2] = n31 * m11 + n32 * m21 + n33 * m31 + n34 * m41
+        te[3] = n41 * m11 + n42 * m21 + n43 * m31 + n44 * m41
+
+        te[4] = n11 * m12 + n12 * m22 + n13 * m32 + n14 * m42
+        te[5] = n21 * m12 + n22 * m22 + n23 * m32 + n24 * m42
+        te[6] = n31 * m12 + n32 * m22 + n33 * m32 + n34 * m42
+        te[7] = n41 * m12 + n42 * m22 + n43 * m32 + n44 * m42
+
+        te[8] = n11 * m13 + n12 * m23 + n13 * m33 + n14 * m43
+        te[9] = n21 * m13 + n22 * m23 + n23 * m33 + n24 * m43
+        te[10] = n31 * m13 + n32 * m23 + n33 * m33 + n34 * m43
+        te[11] = n41 * m13 + n42 * m23 + n43 * m33 + n44 * m43
+
+        te[12] = n11 * m14 + n12 * m24 + n13 * m34 + n14 * m44
+        te[13] = n21 * m14 + n22 * m24 + n23 * m34 + n24 * m44
+        te[14] = n31 * m14 + n32 * m24 + n33 * m34 + n34 * m44
+        te[15] = n41 * m14 + n42 * m24 + n43 * m34 + n44 * m44
+
+        return this
     }
     set(n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44) {
         const te = this.elements;

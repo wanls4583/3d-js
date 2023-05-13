@@ -53,5 +53,15 @@
 
     printMtrix(new Matrix4().makeOrthographic(-10, -4, 4, 1, -1, 4), 'makeOrthographi1')
     printMtrix(new MyMatrix4().makeOrthographic(-10, -4, 4, 1, -1, 4), 'makeOrthographic2')
+
+    console.log('\mmultiply：\n\n')
+
+    printMtrix(m1.clone().multiply(new Matrix4().fromArray(arr)), 'multiply1')
+    printMtrix(m2.clone().multiply(new MyMatrix4().fromArray(arr)), 'multiply2')
+
+    console.log('\mmakePerspective：\n\n')
+
+    printMtrix(m1.clone().makePerspective(-10, -4, 4, 1, -1, 4), 'makePerspective1')
+    printMtrix(m2.clone().makePerspective(-10, -4, 4, 1, -1, 4), 'makePerspective2')
 </script>
 </html>
