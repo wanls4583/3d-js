@@ -118,17 +118,44 @@ function invertMatrix(te) {
     }
 }
 
-function multiplyComplex(cx1, cx2) {
-    // (w1 + x1i + y1i + z1i) *
-    // (w2 + x2i + y2i + z2i)
+function multiplyComplex() {
+    // (w1 + x1i + y1j + z1k) *
+    // (w2 + x2i + y2j + z2k)
     // =
-    // w1*w2 + w1*x2i + w1*y2i + w1*z2i +
-    // x1i*w2 + x1i*x2i + x1i*y2i + x1i*z2i +
-    // y1i*w2 + y1i*x2i + y1i*y2i + y1i*z2i +
-    // z1i*w2 + z1i*x2i + z1i*y2i + z1i*z2i +
+    // w1*w2 + w1*x2i + w1*y2j + w1*z2k +
+    // x1i*w2 + x1i*x2i + x1i*y2j + x1i*z2k +
+    // y1j*w2 + y1j*x2i + y1j*y2j + y1j*z2k +
+    // z1k*w2 + z1k*x2i + z1k*y2j + z1k*z2k
     // =
-    // w1 * w2 + (w1*x2 + w1*y2 + w1*z2 + w2*x1 + w2*y1 + w2*z1)i + 
-    // -(x1*x2 + x1*y2 + x1*z3 + y1*x2 + y1*y2 + y1*z2 + z1*x2 + z1*y2 + z1*z2)
+    // w1*w2 + (w1*x2)i + (w1*y2)j + (w1*z2)k +
+    // (w2*x1)i - x1*x2 + (x1y2)k - (x1z2)j + 
+    // (w2*y1)j - (y1x2)k - y1*y2 + (y1z2)i + 
+    // (w2*z1)k + (z1x2)j - (z1y2)i - z1z2
+    // =
+    // w1*w2 - x1*x2 - y1y2 - z1z2 + 
+    // (w1*x2 + w2*x1 + y1z2 - z1y2)i +
+    // (w1*y2 + w2*y1 + z1x2 - x1z2)j +
+    // (w1*z2 + w2*z1 + x1y2 - y1x2)k
+    if (arguments.length === 1) {
+        return arguments[0]
+    }
+    let result = { x: 0, y: 0, z: 0, w: 1 }
+    for (let i = 0; i < arguments.length; i++) {
+        result = _multiplyComplex(result, arguments[i])
+    }
+    return result
+
+    function _multiplyComplex(a, b) {
+        const x1 = a.x, y1 = a.y, z1 = a.z, w1 = a.w || 0
+        const x2 = b.x, y2 = b.y, z2 = b.z, w2 = b.w || 0
+
+        return {
+            x: w1 * x2 + w2 * x1 + y1 * z2 - z1 * y2,
+            y: w1 * y2 + w2 * y1 + z1 * x2 - x1 * z2,
+            z: w1 * z2 + w2 * z1 + x1 * y2 - y1 * x2,
+            w: w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2
+        }
+    }
 }
 
 function printMtrix(mt, title = 'matrix') {
@@ -139,7 +166,7 @@ function printMtrix(mt, title = 'matrix') {
         arr = arr.map(num => {
             num = num.toFixed(6)
             num = num[0] == '-' ? num : ' ' + num
-            for(let i = 0, len = 12 - num.length; i < len; i++) {
+            for (let i = 0, len = 12 - num.length; i < len; i++) {
                 num += ' '
             }
             return num
@@ -156,5 +183,6 @@ export {
     clamp,
     matrixToRowCol,
     invertMatrix,
+    multiplyComplex,
     printMtrix
 }

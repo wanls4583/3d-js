@@ -1,4 +1,7 @@
-import * as MathUtils from './MathUtils.js'
+import { clamp, multiplyComplex } from './MathUtils.js'
+import Quaternion from './Quaternion.js'
+
+const _quaternion = new Quaternion();
 
 export default class {
     constructor(x = 0, y = 0, z = 0) {
@@ -24,8 +27,8 @@ export default class {
         this.z = a.z + b.z
         return this
     }
-    applyAxisAngle() {
-
+    applyAxisAngle(axis, angle) {
+        return this.applyQuaternion(_quaternion.setFromAxisAngle(axis, angle));
     }
     applyMatrix3() {
 
@@ -33,8 +36,8 @@ export default class {
     applyMatrix4() {
 
     }
-    applyQuaternion() {
-
+    applyQuaternion(q) {
+        return this.copy(multiplyComplex(q, this, q.clone().invert()))
     }
     angleTo(vec3) {
         const denominator = Math.sqrt(this.lengthSq() * vec3.lengthSq())
@@ -42,7 +45,7 @@ export default class {
             return Math.PI / 2
         }
         const theta = this.dot(vec3) / denominator
-        return Math.acos(MathUtils.clamp(theta, -1, 1))
+        return Math.acos(clamp(theta, -1, 1))
     }
     clamp(min, max) {
         this.x = Math.max(min.x, Math.min(max.x, this.x));
@@ -54,6 +57,7 @@ export default class {
         this.x = vec3.x
         this.y = vec3.y
         this.z = vec3.z
+
         return this
     }
     clone() {

@@ -10,9 +10,11 @@
     
 </body>
 <script type="module">
+    import MyQuaternion from './Quaternion.js'
     import MyMatrix4 from './Matrix4.js'
+    import MyVector3 from './Vector3.js'
     import { printMtrix } from './MathUtils.js'
-    import { Matrix4, Vector3 } from '../../three.module.js'
+    import { Matrix4, Vector3, Quaternion } from '../../three.module.js'
     let arr = [
         0.5, 0.5, 0.3, 0, 
         0.5, 0.7, 0, 0,
@@ -49,19 +51,48 @@
     printMtrix(new Matrix4().makeRotationAxis(axis, angle), 'makeRotationAxis1')
     printMtrix(new MyMatrix4().makeRotationAxis(axis, angle), 'makeRotationAxis2')
 
-    console.log('\makeOrthographic：\n\n')
+    console.log('\nmakeOrthographic：\n\n')
 
     printMtrix(new Matrix4().makeOrthographic(-10, -4, 4, 1, -1, 4), 'makeOrthographi1')
     printMtrix(new MyMatrix4().makeOrthographic(-10, -4, 4, 1, -1, 4), 'makeOrthographic2')
 
-    console.log('\mmultiply：\n\n')
+    console.log('\nmultiply：\n\n')
 
     printMtrix(m1.clone().multiply(new Matrix4().fromArray(arr)), 'multiply1')
     printMtrix(m2.clone().multiply(new MyMatrix4().fromArray(arr)), 'multiply2')
 
-    console.log('\mmakePerspective：\n\n')
+    console.log('\nmakePerspective：\n\n')
 
     printMtrix(m1.clone().makePerspective(-10, -4, 4, 1, -1, 4), 'makePerspective1')
     printMtrix(m2.clone().makePerspective(-10, -4, 4, 1, -1, 4), 'makePerspective2')
+
+    {
+        console.log('\nsetFromAxisAngle：\n\n')
+
+        const vec3 = new Vector3(1, 1, 1)
+
+        console.log(...new Quaternion().setFromAxisAngle(vec3 , Math.PI / 6))
+        console.log(...new MyQuaternion().setFromAxisAngle(vec3 , Math.PI / 6))
+
+    }
+
+    {
+        console.log('\nmultiplyQuaternions：\n\n')
+
+        const q1 = new Quaternion(1, 1, 1, 1)
+        const q2 = new Quaternion(1, 1, 0, 0)
+
+        console.log(...new Quaternion().multiplyQuaternions(q1 , q2))
+        console.log(...new MyQuaternion().multiplyQuaternions(q1 , q2))
+    }
+
+    {
+        console.log('\napplyAxisAngle：\n\n')
+
+        const vec3 = new Vector3(1, 1, 1)
+
+        console.log(...new Vector3(1, 0, 0).applyAxisAngle(vec3 , Math.PI / 6))
+        console.log(...new MyVector3(1, 0, 0).applyAxisAngle(vec3 , Math.PI / 6))
+    }
 </script>
 </html>
