@@ -177,17 +177,25 @@ export default class {
         return this
     }
     multiply(m) {
+        return this.multiplyMatrices(this, m)
+    }
+    premultiply() {
+        return this.multiplyMatrices(m, this)
+    }
+    multiplyMatrices(a, b) {
+        const ta = a.elements
+        const tb = b.elements
         const te = this.elements
-        const n11 = te[0], n12 = te[4], n13 = te[8], n14 = te[12]
-        const n21 = te[1], n22 = te[5], n23 = te[9], n24 = te[13]
-        const n31 = te[2], n32 = te[6], n33 = te[10], n34 = te[14]
-        const n41 = te[3], n42 = te[7], n43 = te[11], n44 = te[15]
 
-        const te1 = m.elements
-        const m11 = te1[0], m12 = te1[4], m13 = te1[8], m14 = te1[12]
-        const m21 = te1[1], m22 = te1[5], m23 = te1[9], m24 = te1[13]
-        const m31 = te1[2], m32 = te1[6], m33 = te1[10], m34 = te1[14]
-        const m41 = te1[3], m42 = te1[7], m43 = te1[11], m44 = te1[15]
+        const n11 = ta[0], n12 = ta[4], n13 = ta[8], n14 = ta[12]
+        const n21 = ta[1], n22 = ta[5], n23 = ta[9], n24 = ta[13]
+        const n31 = ta[2], n32 = ta[6], n33 = ta[10], n34 = ta[14]
+        const n41 = ta[3], n42 = ta[7], n43 = ta[11], n44 = ta[15]
+
+        const m11 = tb[0], m12 = tb[4], m13 = tb[8], m14 = tb[12]
+        const m21 = tb[1], m22 = tb[5], m23 = tb[9], m24 = tb[13]
+        const m31 = tb[2], m32 = tb[6], m33 = tb[10], m34 = tb[14]
+        const m41 = tb[3], m42 = tb[7], m43 = tb[11], m44 = tb[15]
 
         te[0] = n11 * m11 + n12 * m21 + n13 * m31 + n14 * m41
         te[1] = n21 * m11 + n22 * m21 + n23 * m31 + n24 * m41
