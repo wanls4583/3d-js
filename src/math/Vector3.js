@@ -31,11 +31,26 @@ export default class {
     applyAxisAngle(axis, angle) {
         return this.applyQuaternion(_quaternion.setFromAxisAngle(axis, angle));
     }
-    applyMatrix3() {
+    applyMatrix3(m) {
+        const x = this.x, y = this.y, z = this.z
+        const te = m.elements
 
+        this.x = te[0] * x + te[3] * y + te[6] * z
+        this.y = te[1] * x + te[4] * y + te[7] * z
+        this.z = te[2] * x + te[5] * y + te[8] * z
+
+        return this
     }
-    applyMatrix4() {
+    applyMatrix4(m) {
+        const x = this.x, y = this.y, z = this.z
+        const te = m.elements
+        const w = te[3] * x + te[7] * y + te[11] * z + te[15]
 
+        this.x = (te[0] * x + te[4] * y + te[8] * z + te[12]) / w
+        this.y = (te[1] * x + te[5] * y + te[9] * z + te[13]) / w
+        this.z = (te[2] * x + te[6] * y + te[10] * z + te[14]) / w
+
+        return this
     }
     applyQuaternion(q) {
         return this.copy(multiplyComplex(q, this, q.clone().invert()))
