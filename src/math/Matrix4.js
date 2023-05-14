@@ -201,11 +201,79 @@ export default class {
 
         return this
     }
+    makeRotationX(theta) {
+        const c = Math.cos(theta), s = Math.sin(theta)
+
+        this.set(
+            1, 0, 0, 0,
+            0, c, -s, 0,
+            0, s, c, 0,
+            0, 0, 0, 1
+        )
+
+        return this
+    }
+    makeRotationY(theta) {
+        const c = Math.cos(theta), s = Math.sin(theta)
+
+        this.set(
+            c, 0, s, 0,
+            0, 1, 0, 0,
+            -s, 0, c, 0,
+            0, 0, 0, 1
+        )
+
+        return this
+    }
+    makeRotationZ(theta) {
+        const c = Math.cos(theta), s = Math.sin(theta)
+
+        this.set(
+            c, -s, 0, 0,
+            s, c, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1
+        )
+
+        return this
+    }
+    makeScale(x, y, z) {
+        this.set(
+            x, 0, 0, 0,
+            0, y, 0, 0,
+            0, 0, z, 0,
+            0, 0, 0, 1
+        );
+
+        return this;
+    }
+    makeTranslation(x, y, z) {
+        this.set(
+
+            1, 0, 0, x,
+            0, 1, 0, y,
+            0, 0, 1, z,
+            0, 0, 0, 1
+
+        );
+
+        return this;
+    }
     multiply(m) {
         return this.multiplyMatrices(this, m)
     }
     premultiply() {
         return this.multiplyMatrices(m, this)
+    }
+    multiplyScalar(scaler) {
+        const te = this.elements
+
+        te[0] *= scaler, te[4] *= scaler, te[8] *= scaler, te[12] *= scaler
+        te[1] *= scaler, te[5] *= scaler, te[9] *= scaler, te[13] *= scaler
+        te[2] *= scaler, te[6] *= scaler, te[10] *= scaler, te[14] *= scaler
+        te[3] *= scaler, te[7] *= scaler, te[11] *= scaler, te[15] *= scaler
+
+        return this
     }
     multiplyMatrices(a, b) {
         const ta = a.elements
@@ -253,5 +321,30 @@ export default class {
         te[3] = n41; te[7] = n42; te[11] = n43; te[15] = n44;
 
         return this;
+    }
+    setFromMatrix3(m) {
+        const me = m.elements;
+
+        this.set(
+            me[0], me[3], me[6], 0,
+            me[1], me[4], me[7], 0,
+            me[2], me[5], me[8], 0,
+            0, 0, 0, 1
+        );
+
+        return this;
+    }
+    setPostion(x, y, z) {
+        if (x.isVector3) {
+            y = x.y, z = x.z, x = x.x
+        }
+
+        const te = this.elements
+
+        te[12] = x
+        te[13] = y
+        te[14] = z
+
+        return this
     }
 }

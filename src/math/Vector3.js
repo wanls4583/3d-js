@@ -8,6 +8,7 @@ export default class {
         this.x = x
         this.y = y
         this.z = z
+        this.isVector3 = true
     }
     add(vec3) {
         this.x += vec3.x
