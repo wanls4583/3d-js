@@ -100,6 +100,16 @@ export default class {
 
         return this
     }
+    makeBasis(vx, vy, vz) {
+        this.set(
+            vx.x, vy.x, vz.x, 0,
+            vx.y, vy.y, vz.y, 0,
+            vx.z, vy.z, vz.z, 0,
+            0, 0, 0, 1
+        )
+
+        return this
+    }
     makeRotationAxis(axis, theta) {
         const a = axis.x, b = axis.y, c = axis.z
         const cos = Math.cos(theta), sin = Math.sin(theta), cos1 = 1 - cos
