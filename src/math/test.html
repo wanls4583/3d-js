@@ -69,7 +69,7 @@
     {
         console.log('\nsetFromAxisAngle：\n\n')
 
-        const vec3 = new Vector3(1, 1, 1)
+        const vec3 = new Vector3(1, 1, 1).normalize()
 
         console.log(...new Quaternion().setFromAxisAngle(vec3 , Math.PI / 6))
         console.log(...new MyQuaternion().setFromAxisAngle(vec3 , Math.PI / 6))
@@ -89,10 +89,21 @@
     {
         console.log('\napplyAxisAngle：\n\n')
 
-        const vec3 = new Vector3(1, 1, 1)
+        const vec3 = new Vector3(1, 1, 1).normalize()
 
         console.log(...new Vector3(1, 0, 0).applyAxisAngle(vec3 , Math.PI / 6))
         console.log(...new MyVector3(1, 0, 0).applyAxisAngle(vec3 , Math.PI / 6))
+    }
+
+    {
+        console.log('\nmakeRotationFromQuaternion：')
+
+        const vec3 = new Vector3(1, 1, 1).normalize()
+        const q1 = new Quaternion().setFromAxisAngle(vec3, Math.PI / 6)
+        const q2 = new MyQuaternion().setFromAxisAngle(vec3, Math.PI / 6)
+
+        printMtrix(m1.clone().makeRotationFromQuaternion(q1), 'makeRotationFromQuaternio1')
+        printMtrix(m2.clone().makeRotationFromQuaternion(q2), 'makeRotationFromQuaternio2')
     }
 </script>
 </html>

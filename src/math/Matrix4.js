@@ -176,6 +176,31 @@ export default class {
 
         return this
     }
+    makeRotationFromQuaternion(q) {
+        const te = this.elements
+
+        te[0] = 2 * (q.x * q.x + q.w * q.w) - 1
+        te[1] = 2 * (q.x * q.y + q.w * q.z)
+        te[2] = 2 * (q.x * q.z - q.y * q.w)
+        te[3] = 0
+
+        te[4] = 2 * (q.x * q.y - q.w * q.z)
+        te[5] = 2 * (q.y * q.y + q.w * q.w) - 1
+        te[6] = 2 * (q.y * q.z + q.x * q.w)
+        te[7] = 0
+
+        te[8] = 2 * (q.x * q.z + q.y * q.w)
+        te[9] = 2 * (q.y * q.z - q.x * q.w)
+        te[10] = 2 * (q.z * q.z + q.w * q.w) - 1
+        te[11] = 0
+
+        te[12] = 0
+        te[13] = 0
+        te[14] = 0
+        te[15] = 1
+
+        return this
+    }
     multiply(m) {
         return this.multiplyMatrices(this, m)
     }
