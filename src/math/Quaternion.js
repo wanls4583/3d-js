@@ -68,7 +68,52 @@ export default class {
         return this
     }
     setFromRotationMatrix(m) {
+        // 2(xx+ww)-1    2(xy-zw)    2(xz+yw)    0
+        // 2(xy+zw)      2(yy+ww)-1  2(yz-xw)    0
+        // 2(xz-yw)      2(yz+xw)    2(zz+ww)-1  0
+        // 0             0           0           1 
+        const te = m.elements
+        const m11 = te[0], m12 = te[4], m13 = te[8]
+        const m21 = te[1], m22 = te[5], m23 = te[9]
+        const m31 = te[2], m32 = te[6], m33 = te[10]
 
+        //trace = 4*w*w - 1
+        let trace = m11 + m22 + m33
+        let t = 0
+
+        if(trace > 0) {
+            t = Math.sqrt(trace + 1) / 2
+            this.w = t
+            this.x = (m32 - m23) / t / 4
+            this.y = (m13 - m31) / t / 4
+            this.z = (m21 - m12) / t / 4
+        } else if (m11 > m22 && m11 > m33) { //斜对角线中x最大（选取最大值优先计算，增加精确度）
+            //trace = 4*x*x - 1
+            trace = m11 - m22 - m33
+            t = Math.sqrt(trace + 1) / 2
+            this.x = t
+            this.y = (m21 + m12) / t / 4
+            this.z = (m31 + m13) / t / 4
+            this.w = (m32 - m23) / t / 4
+        } else if (m22 > m33) { //斜对角线中y最大
+            //trace = 4*y*y - 1
+            trace = m22 - m11 - m33
+            t = Math.sqrt(trace + 1) / 2
+            this.y = t
+            this.x = (m21 + m12) / t / 4
+            this.z = (m32 + m23) / t / 4
+            this.w = (m13 - m31) / t / 4
+        } else { //斜对角线中z最大
+            //trace = 4*z*z - 1
+            trace = m33 - m11 - m22
+            t = Math.sqrt(trace + 1) / 2
+            this.z = t
+            this.x = (m31 + m13) / t / 4
+            this.y = (m32 + m23) / t / 4
+            this.w = (m21 - m12) / t / 4
+        }
+
+        return this
     }
     *[Symbol.iterator]() {
         yield this.x;

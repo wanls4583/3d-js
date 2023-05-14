@@ -112,5 +112,12 @@
         console.log(...new Vector3(1, 0, 0).applyMatrix4(m1))
         console.log(...new MyVector3(1, 0, 0).applyMatrix4(m2))
     }
+
+    {
+        console.log('\nsetFromRotationMatrix：')
+
+        console.log(...new Quaternion().setFromRotationMatrix(m1))
+        console.log(...new MyQuaternion().setFromRotationMatrix(m2))
+    }
 </script>
 </html>
