@@ -1,5 +1,6 @@
 import { clamp } from './MathUtils.js'
 
+// 球坐标
 export default class {
     constructor(radius, phi, theta) {
         this.radius = radius
