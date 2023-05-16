@@ -134,6 +134,30 @@ export default class {
         this.z = z
         return this
     }
+    setFromSpherical(spherical) {
+        return this.setFromSphericalCoords(spherical.radius, spherical.phi, spherical.theta)
+    }
+    setFromSphericalCoords(radius, phi, theta) {
+        const len = radius * Math.sin(phi)
+
+        this.x = len * Math.sin(theta)
+        this.y = radius * Math.cos(phi)
+        this.z = len * Math.cos(theta)
+
+        return this
+    }
+    setFromGeography(geography) {
+        return this.setFromGeographyCoords(geography.radius, geography.latitude, geography.longtidude)
+    }
+    setFromGeographyCoords(radius, latitude, longtidude) {
+        const len = radius * Math.cos(latitude)
+
+        this.x = len * Math.cos(longtidude)
+        this.y = radius * Math.sin(latitude)
+        this.z = -len * Math.sin(longtidude)
+
+        return this
+    }
     setX(x) {
         this.x = x
         return this

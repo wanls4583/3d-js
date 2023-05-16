@@ -14,6 +14,7 @@
     import MyMatrix4 from './Matrix4.js'
     import MyVector3 from './Vector3.js'
     import MySpherical from './Spherical.js'
+    import MyGeograyphy from './Geography.js'
     import { printMtrix } from './MathUtils.js'
     import { Matrix4, Vector3, Quaternion, Spherical } from '../../three.module.js'
     let arr = [
@@ -152,6 +153,18 @@
         s2.makeSafe()
 
         console.log(s1.phi, s2.phi)
+    }
+
+    {
+        const s = new MySpherical()
+        const g = new MyGeograyphy()
+        const vec3 = new MyVector3(1, 2, 3)
+
+        s.setFromVector3(vec3)
+        g.setFromVector3(vec3)
+
+        console.log(...new MyVector3().setFromSpherical(s))
+        console.log(...new MyVector3().setFromGeography(g))
     }
 </script>
 </html>
