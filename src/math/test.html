@@ -13,8 +13,9 @@
     import MyQuaternion from './Quaternion.js'
     import MyMatrix4 from './Matrix4.js'
     import MyVector3 from './Vector3.js'
+    import MySpherical from './Spherical.js'
     import { printMtrix } from './MathUtils.js'
-    import { Matrix4, Vector3, Quaternion } from '../../three.module.js'
+    import { Matrix4, Vector3, Quaternion, Spherical } from '../../three.module.js'
     let arr = [
         0.5, 0.5, 0.3, 0, 
         0.5, 0.7, 0, 0,
@@ -118,6 +119,39 @@
 
         console.log(...new Quaternion().setFromRotationMatrix(m1))
         console.log(...new MyQuaternion().setFromRotationMatrix(m2))
+    }
+
+    {
+        console.log('\nSpherical-setFromCartesianCoords：')
+
+        let s1 = new Spherical().setFromCartesianCoords(1, 2, 3)
+        let s2 = new MySpherical().setFromCartesianCoords(1, 2, 3)
+
+        console.log(s1.radius, s1.phi, s1.theta)
+        console.log(s2.radius, s2.phi, s2.theta)
+    }
+
+    {
+        console.log('\nSpherical-makeSafe：')
+
+        let s1 = new Spherical()
+        let s2 = new MySpherical()
+
+        s1.phi = Math.PI
+        s2.phi = Math.PI
+
+        s1.makeSafe()
+        s2.makeSafe()
+
+        console.log(s1.phi, s2.phi)
+
+        s1.phi =  0
+        s2.phi =  0
+
+        s1.makeSafe()
+        s2.makeSafe()
+
+        console.log(s1.phi, s2.phi)
     }
 </script>
 </html>
