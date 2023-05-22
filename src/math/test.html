@@ -69,6 +69,23 @@
     printMtrix(m2.clone().makePerspective(-10, -4, 4, 1, -1, 4), 'makePerspective2')
 
     {
+        console.log('\ndecompose：\n\n')
+        const p1 = new Vector3()
+        const q1 = new Quaternion()
+        const s1 = new Vector3()
+
+        const p2 = new MyVector3()
+        const q2 = new MyQuaternion()
+        const s2 = new MyVector3()
+
+        m1.decompose(p1, q1, s1)
+        console.log(p1, q1, s1)
+
+        m2.decompose(p2, q2, s2)
+        console.log(p2, q2, s2)
+    }
+
+    {
         console.log('\nsetFromAxisAngle：\n\n')
 
         const vec3 = new Vector3(1, 1, 1).normalize()

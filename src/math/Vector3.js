@@ -3,7 +3,7 @@ import Quaternion from './Quaternion.js'
 
 const _quaternion = new Quaternion();
 
-export default class {
+class Vector3 {
     constructor(x = 0, y = 0, z = 0) {
         this.x = x
         this.y = y
@@ -158,6 +158,13 @@ export default class {
 
         return this
     }
+    setFromMatrixPosition(m) {
+        this.x = m[12]
+        this.y = m[13]
+        this.z = m[14]
+
+        return this
+    }
     setX(x) {
         this.x = x
         return this
@@ -194,3 +201,5 @@ export default class {
         yield this.z;
     }
 }
+
+export default Vector3

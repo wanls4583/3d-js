@@ -1,11 +1,12 @@
 import { multiplyComplex } from './MathUtils.js'
 
-export default class {
+class Quaternion {
     constructor(x = 0, y = 0, z = 0, w = 1) {
         this.x = x
         this.y = y
         this.z = z
         this.w = w
+        this.isQuaternion = true
     }
     copy(q) {
         this.x = q.x
@@ -122,3 +123,5 @@ export default class {
         yield this.w;
     }
 }
+
+export default Quaternion

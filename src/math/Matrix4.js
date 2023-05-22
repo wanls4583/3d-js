@@ -1,6 +1,11 @@
 import { invertMatrix } from './MathUtils.js'
 import Vector3 from './Vector3.js'
-export default class {
+
+const _zero = new Vector3(0, 0, 0);
+const _one = new Vector3(1, 1, 1);
+const _v1 = new Vector3()
+
+class Matrix4 {
     constructor() {
         const te = []
 
@@ -17,8 +22,71 @@ export default class {
     }
     copy(m4) {
         for (let i = 0; i < 16; i++) {
-            this.elements[i] = m4[i]
+            this.elements[i] = m4.elements[i]
         }
+
+        return this
+    }
+    compose(position, quaternion, scale) {
+        const q = quaternion
+        const te = this.elements
+
+        te[0] = (2 * (q.x * q.x + q.w * q.w) - 1) * scale.x
+        te[1] = (2 * (q.x * q.y + q.w * q.z)) * scale.x
+        te[2] = (2 * (q.x * q.z - q.y * q.w)) * scale.x
+        te[3] = 0
+
+        te[4] = (2 * (q.x * q.y - q.w * q.z)) * scale.y
+        te[5] = (2 * (q.y * q.y + q.w * q.w) - 1) * scale.y
+        te[6] = (2 * (q.y * q.z + q.x * q.w)) * scale.y
+        te[7] = 0
+
+        te[8] = (2 * (q.x * q.z + q.y * q.w)) * scale.z
+        te[9] = (2 * (q.y * q.z - q.x * q.w)) * scale.z
+        te[10] = (2 * (q.z * q.z + q.w * q.w) - 1) * scale.z
+        te[11] = 0
+
+        te[12] = position.x
+        te[13] = position.y
+        te[14] = position.z
+        te[15] = 1
+
+        return this
+    }
+    decompose(position, quaternion, scale) {
+        const te = this.elements
+
+        let sx = _v1.set(te[0], te[1], te[2]).length()
+        const sy = _v1.set(te[4], te[5], te[6]).length()
+        const sz = _v1.set(te[8], te[9], te[10]).length()
+
+        if (this.determinant() < 0) {
+            sx = -sx
+        }
+
+        _m1.copy(this)
+
+        _m1.elements[0] /= sx
+        _m1.elements[1] /= sx
+        _m1.elements[2] /= sx
+
+        _m1.elements[4] /= sy
+        _m1.elements[5] /= sy
+        _m1.elements[6] /= sy
+
+        _m1.elements[8] /= sz
+        _m1.elements[9] /= sz
+        _m1.elements[10] /= sz
+
+        quaternion.setFromRotationMatrix(_m1)
+
+        position.x = te[12]
+        position.y = te[13]
+        position.z = te[14]
+
+        scale.x = sx
+        scale.y = sy
+        scale.z = sz
 
         return this
     }
@@ -187,29 +255,7 @@ export default class {
         return this
     }
     makeRotationFromQuaternion(q) {
-        const te = this.elements
-
-        te[0] = 2 * (q.x * q.x + q.w * q.w) - 1
-        te[1] = 2 * (q.x * q.y + q.w * q.z)
-        te[2] = 2 * (q.x * q.z - q.y * q.w)
-        te[3] = 0
-
-        te[4] = 2 * (q.x * q.y - q.w * q.z)
-        te[5] = 2 * (q.y * q.y + q.w * q.w) - 1
-        te[6] = 2 * (q.y * q.z + q.x * q.w)
-        te[7] = 0
-
-        te[8] = 2 * (q.x * q.z + q.y * q.w)
-        te[9] = 2 * (q.y * q.z - q.x * q.w)
-        te[10] = 2 * (q.z * q.z + q.w * q.w) - 1
-        te[11] = 0
-
-        te[12] = 0
-        te[13] = 0
-        te[14] = 0
-        te[15] = 1
-
-        return this
+        return this.compose(_zero, q, _one)
     }
     makeRotationX(theta) {
         const c = Math.cos(theta), s = Math.sin(theta)
@@ -358,3 +404,7 @@ export default class {
         return this
     }
 }
+
+const _m1 = new Matrix4();
+
+export default Matrix4
