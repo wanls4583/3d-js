@@ -14,18 +14,21 @@ class Vector3 {
         this.x += vec3.x
         this.y += vec3.y
         this.z += vec3.z
+
         return this
     }
     addScalar(scaler) {
         this.x += scaler
         this.y += scaler
         this.z += scaler
+
         return this
     }
     addVectors(a, b) {
         this.x = a.x + b.x
         this.y = a.y + b.y
         this.z = a.z + b.z
+
         return this
     }
     applyAxisAngle(axis, angle) {
@@ -61,12 +64,14 @@ class Vector3 {
             return Math.PI / 2
         }
         const theta = this.dot(vec3) / denominator
+
         return Math.acos(clamp(theta, -1, 1))
     }
     clamp(min, max) {
         this.x = Math.max(min.x, Math.min(max.x, this.x));
         this.y = Math.max(min.y, Math.min(max.y, this.y));
         this.z = Math.max(min.z, Math.min(max.z, this.z));
+
         return this
     }
     copy(vec3) {
@@ -86,6 +91,7 @@ class Vector3 {
         this.x = a.y * b.z - a.z * b.y
         this.y = a.z * b.x - a.x * b.z
         this.z = a.x * b.y - a.y * b.x
+
         return this
     }
     distanceTo(vec3) {
@@ -99,6 +105,7 @@ class Vector3 {
         this.x /= vec3.x
         this.y /= vec3.y
         this.z /= vec3.z
+
         return this
     }
     divideScalar(scaler) {
@@ -117,12 +124,14 @@ class Vector3 {
         this.x *= vec3.x
         this.y *= vec3.y
         this.z *= vec3.z
+
         return this
     }
     multiplyScalar(scaler) {
         this.x *= scaler
         this.y *= scaler
         this.z *= scaler
+
         return this
     }
     normalize() {
@@ -132,6 +141,7 @@ class Vector3 {
         this.x = x
         this.y = y
         this.z = z
+
         return this
     }
     setFromSpherical(spherical) {
@@ -167,34 +177,51 @@ class Vector3 {
 
         return this
     }
+    setFromMatrixColumn(m, i) {
+        const te = m.elements
+
+        i = i * 4
+
+        this.x = te[i]
+        this.y = te[i + 1]
+        this.z = te[i + 2]
+
+        return this
+    }
     setX(x) {
         this.x = x
+
         return this
     }
     setY() {
         this.y = y
+
         return this
     }
     setZ() {
         this.z = z
+
         return this
     }
     sub(vec3) {
         this.x -= vec3.x
         this.y -= vec3.y
         this.z -= vec3.z
+
         return this
     }
     subScalar(scaler) {
         this.x -= scaler
         this.y -= scaler
         this.z -= scaler
+
         return this
     }
     subVectors(a, b) {
         this.x = a.x - b.x
         this.y = a.y - b.y
         this.z = a.z - b.z
+
         return this
     }
     *[Symbol.iterator]() {

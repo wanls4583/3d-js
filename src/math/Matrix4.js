@@ -120,6 +120,36 @@ class Matrix4 {
             )
         )
     }
+    extractRotation(m) {
+        const te = this.elements
+        const me = m.elements
+
+        const scaleX = _v1.setFromMatrixColumn(m, 0).length()
+        const scaleY = _v1.setFromMatrixColumn(m, 1).length()
+        const scaleZ = _v1.setFromMatrixColumn(m, 2).length()
+
+        te[0] = me[0] / scaleX
+        te[1] = me[1] / scaleX
+        te[2] = me[2] / scaleX
+        te[3] = 0
+
+        te[4] = me[4] / scaleY
+        te[5] = me[5] / scaleY
+        te[6] = me[6] / scaleY
+        te[7] = 0
+
+        te[8] = me[8] / scaleZ
+        te[9] = me[9] / scaleZ
+        te[10] = me[10] / scaleZ
+        te[11] = 0
+
+        te[12] = 0
+        te[13] = 0
+        te[14] = 0
+        te[15] = 1
+
+        return this
+    }
     fromArray(arr, offset = 0) {
         for (let i = 0; i < 16; i++) {
             this.elements[i] = arr[i + offset];
@@ -128,7 +158,9 @@ class Matrix4 {
         return this;
     }
     invert() {
-        return new this.constructor().fromArray(invertMatrix(this.elements))
+        this.fromArray(invertMatrix(this.elements))
+
+        return this
     }
     identity() {
         this.set(
@@ -164,7 +196,6 @@ class Matrix4 {
         let y = z.clone().cross(x)
 
         this.fromArray([...x, 0, ...y, 0, ...z, 0, 0, 0, 0, 1])
-        this.invert()
 
         return this
     }

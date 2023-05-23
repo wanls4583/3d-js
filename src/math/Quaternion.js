@@ -50,7 +50,10 @@ class Quaternion {
         return this
     }
     multiply(q) {
-        this.multiplyQuaternions(this, q)
+        return this.multiplyQuaternions(this, q)
+    }
+    preMultiply(q) {
+        return this.multiplyQuaternions(q, this)
     }
     multiplyQuaternions(a, b) {
         const result = multiplyComplex(a, b)
@@ -82,7 +85,7 @@ class Quaternion {
         let trace = m11 + m22 + m33
         let t = 0
 
-        if(trace > 0) {
+        if (trace > 0) {
             t = Math.sqrt(trace + 1) / 2
             this.w = t
             this.x = (m32 - m23) / t / 4

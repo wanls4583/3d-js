@@ -9,9 +9,14 @@ const _xAxis = new Vector3(1, 0, 0)
 const _yAxis = new Vector3(0, 1, 0)
 const _zAxis = new Vector3(0, 0, 1)
 
+const _target = new Vector3()
 const _position = new Vector3();
 const _scale = new Vector3();
 const _quaternion = new Quaternion();
+
+const _v1 = new Vector3()
+const _m1 = new Matrix4()
+const _q1 = new Quaternion()
 
 class Object3D {
     constructor() {
@@ -29,6 +34,110 @@ class Object3D {
         this.scale = new Vector3(1, 1, 1)
         this.up = Object3D.DEFAULT_UP.clone()
         this.uuid = generateUUID()
+    }
+    applyMatrix4(m) {
+        if (this.matrixAutoUpdate) {
+            this.updateMatrix()
+        }
+
+        this.matrix.premultiply(m)
+        this.matrix.decompose(this.position, this.quaternion, this.scale)
+
+        return this
+    }
+    applyQuaternion(q) {
+        this.quaternion.premultiply(q)
+
+        return this
+    }
+    setRotationFromAxisAngle(axis, angle) {
+        this.quaternion.setFromAxisAngle(axis, angle)
+
+        return this
+    }
+    setRotationFromMatrix(m) {
+        this.quaternion.setFromRotationMatrix(m)
+
+        return this
+    }
+    setRotationFromQuaternion(q) {
+        this.quaternion.copy(q)
+
+        return this
+    }
+    // 在本地坐标系绕axis旋转angle
+    rotateOnAxis(axis, angle) {
+        _q1.setFromAxisAngle(axis, angle)
+        this.quaternion.multiply(_q1)
+
+        return this
+    }
+    // 在世界坐标系中绕axis旋转angle
+    rotateOnWorldAxis(axis, angle) {
+        _q1.setFromAxisAngle(axis, angle)
+        this.quaternion.preMultiply(_q1)
+
+        return this
+    }
+    rotateX(angle) {
+        return this.rotateOnAxis(_xAxis, angle)
+    }
+    rotateY(angle) {
+        return this.rotateOnAxis(_yAxis, angle)
+    }
+    rotateZ(angle) {
+        return this.rotateOnAxis(_zAxis, angle)
+    }
+    translateOnAxis(axis, distance) {
+        _v1.copy(axis).applyQuaternion(this.quaternion)
+        this.position.add(_v1.multiplyScalar(distance))
+
+        return this
+    }
+    translateX(distance) {
+        return this.translateOnAxis(_xAxis, distance)
+    }
+    translateY(distance) {
+        return this.translateOnAxis(_yAxis, distance)
+    }
+    translateZ(distance) {
+        return this.translateOnAxis(_zAxis, distance)
+    }
+    localToWorld(vector) {
+        this.updateWorldMatrix(true, false)
+
+        return vector.applyMatrix4(this.matrixWorld)
+    }
+    worldToLocal(vector) {
+        this.updateWorldMatrix(true, false)
+
+        return vector.applyMatrix4(_m1.copy(this.matrixWorld).invert())
+    }
+    lookAt(x, y, z) {
+        if (x.isVector3) {
+            _target.copy(x)
+        } else {
+            _target.set(x, y, z)
+        }
+
+        this.updateWorldMatrix(true, false)
+        _position.setFromMatrixPosition(this.matrixWorld)
+
+        if (this.isCamera || this.isLight) {
+            _m1.lookAt(_position, _target, this.up)
+        } else {
+            _m1.lookAt(_target, _position, this.up)
+        }
+
+        this.quaternion.setFromRotationMatrix(_m1)
+
+        if (this.parent) { //转换成相对于父坐标系的四元数
+            _m1.extractRotation(this.parent.matrixWorld)
+            _q1.setFromRotationMatrix(_m1)
+            this.quaternion.preMultiply(_q1.invert())
+        }
+
+        return this
     }
     add(object) {
         if (arguments.length > 1) {
@@ -171,6 +280,8 @@ class Object3D {
     updateMatrix() {
         this.matrix.compose(this.position, this.quaternion, this.scale)
         this.matrixWorldNeedsUpdate = true
+
+        return this
     }
     updateMatrixWorld(force) {
         if (this.matrixAutoUpdate) {
@@ -195,6 +306,8 @@ class Object3D {
                 child.updateMatrixWorld(force)
             }
         }
+
+        return this
     }
     updateWorldMatrix(updateParents, updateChildren) {
         const parent = this.parent
