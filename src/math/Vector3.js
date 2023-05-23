@@ -159,9 +159,11 @@ class Vector3 {
         return this
     }
     setFromMatrixPosition(m) {
-        this.x = m[12]
-        this.y = m[13]
-        this.z = m[14]
+        const te = m.elements
+
+        this.x = te[12]
+        this.y = te[13]
+        this.z = te[14]
 
         return this
     }
