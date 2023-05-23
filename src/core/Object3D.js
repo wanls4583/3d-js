@@ -32,6 +32,7 @@ class Object3D {
         this.position = new Vector3()
         this.quaternion = new Quaternion()
         this.scale = new Vector3(1, 1, 1)
+        this.type = 'Object3D'
         this.up = Object3D.DEFAULT_UP.clone()
         this.uuid = generateUUID()
     }

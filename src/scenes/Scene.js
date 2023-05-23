@@ -12,14 +12,16 @@ class Scene extends Object3D {
     copy(source, recursive) {
         super.copy(source, recursive)
 
-        if(source.background !== null) {
+        if (source.background !== null) {
             this.background = source.background
         }
 
-        if(source.environment !== null) {
+        if (source.environment !== null) {
             this.environment = source.environment
         }
 
         return this
     }
 }
+
+export default Scene
