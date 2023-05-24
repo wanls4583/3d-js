@@ -193,7 +193,12 @@ function printMtrix(mt, title = 'matrix') {
     return str.join('\n')
 }
 
+const DEG2RAD = Math.PI / 180
+const RAD2DEG = 180 / Math.PI
+
 export {
+    DEG2RAD,
+    RAD2DEG,
     clamp,
     matrixToRowCol,
     invertMatrix,
