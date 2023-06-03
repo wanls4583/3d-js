@@ -27,46 +27,64 @@
     let m1 = new Matrix4().fromArray(arr.slice())
     let m2 = new MyMatrix4().fromArray(arr.slice())
 
-    console.log('\ndeterminant：\n\n')
-    console.log(m1.determinant())
-    console.log(m2.determinant())
+    {
+        console.log('\ndeterminant：\n\n')
+        console.log(m1.determinant())
+        console.log(m2.determinant())
+    }
 
-    console.log('\ninvert：\n\n')
-    printMtrix(m1.clone().invert(), 'm1')
-    printMtrix(m2.clone().invert(), 'm2')
+    {
+        console.log('\ninvert：\n\n')
+        printMtrix(m1.clone().invert(), 'm1')
+        printMtrix(m2.clone().invert(), 'm2')
+    }
     
+    {
+        console.log('\nlookAt：\n\n')
     
-    console.log('\nlookAt：\n\n')
+        let eye = new Vector3(0.1, 0.2, 0.5)
+        let target = new Vector3(0.2, 0, 0)
+        let up = new Vector3(0, 1, 0)
+    
+        let eye1 = new MyVector3(0.1, 0.2, 0.5)
+        let target1 = new MyVector3(0.2, 0, 0)
+        let up1 = new MyVector3(0, 1, 0)
+    
+        printMtrix(new Matrix4().lookAt(eye, target, up), 'look1')
+        printMtrix(new MyMatrix4().lookAt(eye1, target1, up1), 'look2')
+    }
 
-    let eye = new Vector3(0.1, 0.2, 0.5)
-    let target = new Vector3(0.2, 0, 0)
-    let up = new Vector3(0, 1, 0)
+    {
+        console.log('\nmakeRotationAxis：\n\n')
+    
+        let axis = new Vector3(1, 1, 1).normalize()
+        let axis1 = new MyVector3(1, 1, 1).normalize()
+        let angle = Math.PI / 6
+    
+        printMtrix(new Matrix4().makeRotationAxis(axis, angle), 'makeRotationAxis1')
+        printMtrix(new MyMatrix4().makeRotationAxis(axis1, angle), 'makeRotationAxis2')
+    }
+    
+    {
+        console.log('\nmakeOrthographic：\n\n')
+    
+        printMtrix(new Matrix4().makeOrthographic(-10, -4, 4, 1, -1, 4), 'makeOrthographi1')
+        printMtrix(new MyMatrix4().makeOrthographic(-10, -4, 4, 1, -1, 4), 'makeOrthographic2')
+    }
 
-    printMtrix(new Matrix4().lookAt(eye, target, up), 'look1')
-    printMtrix(new MyMatrix4().lookAt(eye, target, up), 'look2')
+    {
+        console.log('\nmultiply：\n\n')
+    
+        printMtrix(m1.clone().multiply(new Matrix4().fromArray(arr)), 'multiply1')
+        printMtrix(m2.clone().multiply(new MyMatrix4().fromArray(arr)), 'multiply2')
+    }
 
-    console.log('\nmakeRotationAxis：\n\n')
-
-    let axis = new Vector3(1, 1, 1).normalize()
-    let angle = Math.PI / 6
-
-    printMtrix(new Matrix4().makeRotationAxis(axis, angle), 'makeRotationAxis1')
-    printMtrix(new MyMatrix4().makeRotationAxis(axis, angle), 'makeRotationAxis2')
-
-    console.log('\nmakeOrthographic：\n\n')
-
-    printMtrix(new Matrix4().makeOrthographic(-10, -4, 4, 1, -1, 4), 'makeOrthographi1')
-    printMtrix(new MyMatrix4().makeOrthographic(-10, -4, 4, 1, -1, 4), 'makeOrthographic2')
-
-    console.log('\nmultiply：\n\n')
-
-    printMtrix(m1.clone().multiply(new Matrix4().fromArray(arr)), 'multiply1')
-    printMtrix(m2.clone().multiply(new MyMatrix4().fromArray(arr)), 'multiply2')
-
-    console.log('\nmakePerspective：\n\n')
-
-    printMtrix(m1.clone().makePerspective(-10, -4, 4, 1, -1, 4), 'makePerspective1')
-    printMtrix(m2.clone().makePerspective(-10, -4, 4, 1, -1, 4), 'makePerspective2')
+    {
+        console.log('\nmakePerspective：\n\n')
+    
+        printMtrix(m1.clone().makePerspective(-10, -4, 4, 1, -1, 4), 'makePerspective1')
+        printMtrix(m2.clone().makePerspective(-10, -4, 4, 1, -1, 4), 'makePerspective2')
+    }
 
     {
         console.log('\ndecompose：\n\n')
@@ -88,10 +106,11 @@
     {
         console.log('\nsetFromAxisAngle：\n\n')
 
-        const vec3 = new Vector3(1, 1, 1).normalize()
+        const axis = new Vector3(1, 1, 1).normalize()
+        const axis1 = new MyVector3(1, 1, 1).normalize()
 
-        console.log(...new Quaternion().setFromAxisAngle(vec3 , Math.PI / 6))
-        console.log(...new MyQuaternion().setFromAxisAngle(vec3 , Math.PI / 6))
+        console.log(...new Quaternion().setFromAxisAngle(axis , Math.PI / 6))
+        console.log(...new MyQuaternion().setFromAxisAngle(axis1 , Math.PI / 6))
 
     }
 
@@ -108,18 +127,21 @@
     {
         console.log('\napplyAxisAngle：\n\n')
 
-        const vec3 = new Vector3(1, 1, 1).normalize()
+        const axis = new Vector3(1, 1, 1).normalize()
+        const axis1 = new MyVector3(1, 1, 1).normalize()
 
-        console.log(...new Vector3(1, 0, 0).applyAxisAngle(vec3 , Math.PI / 6))
-        console.log(...new MyVector3(1, 0, 0).applyAxisAngle(vec3 , Math.PI / 6))
+        console.log(...new Vector3(1, 0, 0).applyAxisAngle(axis , Math.PI / 6))
+        console.log(...new MyVector3(1, 0, 0).applyAxisAngle(axis1 , Math.PI / 6))
     }
 
     {
         console.log('\nmakeRotationFromQuaternion：')
 
-        const vec3 = new Vector3(1, 1, 1).normalize()
-        const q1 = new Quaternion().setFromAxisAngle(vec3, Math.PI / 6)
-        const q2 = new MyQuaternion().setFromAxisAngle(vec3, Math.PI / 6)
+        const axis = new Vector3(1, 1, 1).normalize()
+        const axis1 = new MyVector3(1, 1, 1).normalize()
+
+        const q1 = new Quaternion().setFromAxisAngle(axis, Math.PI / 6)
+        const q2 = new MyQuaternion().setFromAxisAngle(axis1, Math.PI / 6)
 
         printMtrix(m1.clone().makeRotationFromQuaternion(q1), 'makeRotationFromQuaternio1')
         printMtrix(m2.clone().makeRotationFromQuaternion(q2), 'makeRotationFromQuaternio2')
@@ -173,6 +195,7 @@
     }
 
     {
+        console.log('\nVector3-setFromSpherical|setFromGeography：')
         const s = new MySpherical()
         const g = new MyGeograyphy()
         const vec3 = new MyVector3(1, 2, 3)

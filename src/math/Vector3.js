@@ -88,9 +88,11 @@ class Vector3 {
         return this.crossVectors(this, vec3)
     }
     crossVectors(a, b) {
-        this.x = a.y * b.z - a.z * b.y
-        this.y = a.z * b.x - a.x * b.z
-        this.z = a.x * b.y - a.y * b.x
+        const ax = a.x, ay = a.y, az = a.z
+        const bx = b.x, by = b.y, bz = b.z
+        this.x = ay * bz - az * by
+        this.y = az * bx - ax * bz
+        this.z = ax * by - ay * bx
 
         return this
     }

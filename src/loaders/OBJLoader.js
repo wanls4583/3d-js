@@ -1,14 +1,12 @@
 let nowObj = null
 let nowMtl = null
+let nowUsemtl = ''
 let mtllibFile = ''
 
 export default class OBJLoader {
     constructor() {
-        this.objs = {
-            'default': {}
-        }
+        this.objs = {}
         this.mtls = {}
-        nowObj = this.objs.default
     }
     async parseObj(objUrl) {
         const text = await this.loadFile(objUrl)
@@ -21,7 +19,12 @@ export default class OBJLoader {
             }
         })
         if (mtllibFile) {
-            return this.parseMTL(mtllibFile)
+            return this.parseMTL(mtllibFile).then(() => {
+                return {
+                    objs: this.objs,
+                    mtls: this.mtls
+                }
+            })
         }
     }
     async parseMTL(objUrl) {
@@ -48,7 +51,7 @@ export default class OBJLoader {
         mtllibFile = data.trim()
     }
     usemtl(data) {
-        nowObj.usemtl = data.trim()
+        nowUsemtl = data.trim()
     }
     o(data) {
         nowObj = {
@@ -74,12 +77,18 @@ export default class OBJLoader {
     f(data) {
         const v = [], vt = [], vn = []
         data = this.splitData(data).map(s => s.split('/').map(d => d - 0 || 0))
-        data.forEach(d => {
+        for (let i = 0; i < data.length - 2; i++) {
+            _addVertex(data[0])
+            _addVertex(data[i + 1])
+            _addVertex(data[i + 2])
+        }
+        nowObj.f.push({ v, vt, vn, usemtl: nowUsemtl })
+
+        function _addVertex(d) {
             d[0] && v.push(nowObj.v[d[0] - 1])
             d[1] && vt.push(nowObj.vt[d[1] - 1])
             d[2] && vn.push(nowObj.vn[d[2] - 1])
-        })
-        nowObj.f.push({ v, vt, vn, usemtl: nowObj.usemtl })
+        }
     }
     // 以下为mtl文件相关属性
     newmtl(data) {
