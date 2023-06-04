@@ -25,16 +25,20 @@
     <canvas id="canvas"></canvas>
     <script id="vertexShader" type="x-shader/x-vertex">
         attribute vec4 a_Position;
+        attribute vec4 a_Color;
         uniform mat4 u_PvMatrix;
+        uniform mat4 u_MMatrix;
+        varying vec4 v_Color;
         void main() {
-            gl_Position = u_PvMatrix * a_Position;
+            gl_Position = u_PvMatrix * u_MMatrix * a_Position;
+            v_Color = a_Color;
         }
       </script>
     <script id="fragmentShader" type="x-shader/x-fragment">
         precision mediump float;
-        uniform vec4 u_Color;
+        varying vec4 v_Color;
         void main() {
-            gl_FragColor = u_Color;
+            gl_FragColor = v_Color;
         }
       </script>
     <script type="module">
@@ -53,7 +57,7 @@
 
         const gl = canvas.getContext('webgl')
 
-        gl.clearColor(0, 0, 0, 1) //背景色
+        gl.clearColor(0.8, 0.8, 0.8, 1) //背景色
         gl.clear(gl.COLOR_BUFFER_BIT) //填充背景色
 
         gl.enable(gl.BLEND) //开启混合
@@ -71,7 +75,7 @@
         const camera = new OrthographicCamera(left, right, top, bottom, near, far)
         const position = new Vector3(5, 5, 5)
         camera.position.copy(position)
-        camera.lookAt(new Vector3(0.5, 0.5, 0))
+        camera.lookAt(new Vector3(0.5, 4, 0))
         camera.updateWorldMatrix(true)
 
         const pvMatrix = new Matrix4().multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse)
@@ -79,29 +83,47 @@
         setUniform(gl, 'u_PvMatrix', 'uniformMatrix4fv', [false, pvMatrix.elements])
 
         const loader = new OBJLoader()
+        const allVertex = []
+        const allColor = []
 
-        loader.parseObj('./cube.obj').then((data) => {
+        loader.parseObj('./chair.obj').then((data) => {
             const { objs, mtls } = data
-            gl.clearColor(0, 0, 0, 1)
-            gl.clear(gl.COLOR_BUFFER_BIT)
             for (let o in objs) {
                 let obj = objs[o]
                 obj.f.forEach(f => {
-                    let colors = []
-                    let a_Position = gl.getAttribLocation(gl.program, 'a_Position')
-                    let u_Color = gl.getUniformLocation(gl.program, 'u_Color')
                     let color = [0, 1, 0, 1]
-
-                    enableVertexAttribArray(gl, 'a_Position', new Float32Array(f.v.flat()), 3)
+                    allVertex.push(...f.v.flat())
                     if (f.usemtl && mtls[f.usemtl]) {
                         color = [...mtls[f.usemtl].Kd, mtls[f.usemtl].d]
                     }
-                    setUniform(gl, 'u_Color', 'uniform4f', color)
-                    gl.drawArrays(gl.TRIANGLES, 0, f.v.length)
+                    f.v.forEach(() => {
+                        allColor.push(...color)
+                    })
                 })
             }
+            render()
         })
 
+        let angle = 0
+
+        function render() {
+            let a_Position = gl.getAttribLocation(gl.program, 'a_Position')
+            let a_Color = gl.getUniformLocation(gl.program, 'a_Color')
+
+            angle = (angle + 0.01) % (2 * Math.PI)
+
+            enableVertexAttribArray(gl, 'a_Position', new Float32Array(allVertex), 3)
+            enableVertexAttribArray(gl, 'a_Color', new Float32Array(allColor), 4)
+            setUniform(gl, 'u_MMatrix', 'uniformMatrix4fv', [false, new Matrix4().makeRotationY(angle).elements])
+
+            gl.clearColor(0.3, 0.3, 0.0, 1)
+            gl.clear(gl.COLOR_BUFFER_BIT)
+            gl.drawArrays(gl.TRIANGLES, 0, allVertex.length / 3)
+
+            requestAnimationFrame(() => {
+                render()
+            })
+        }
     </script>
 </body>
 

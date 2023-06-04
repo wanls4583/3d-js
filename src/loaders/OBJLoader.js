@@ -2,6 +2,11 @@ let nowObj = null
 let nowMtl = null
 let nowUsemtl = ''
 let mtllibFile = ''
+let allVtn = {
+    v: [],
+    vt: [],
+    vn: []
+}
 
 export default class OBJLoader {
     constructor() {
@@ -55,24 +60,21 @@ export default class OBJLoader {
     }
     o(data) {
         nowObj = {
-            v: [],
-            vt: [],
-            vn: [],
             f: []
         }
         this.objs[data] = nowObj
     }
     v(data) {
         data = this.splitData(data).map(s => Number(s))
-        nowObj.v.push(data.slice(0, 3))
+        allVtn.v.push(data.slice(0, 3))
     }
     vt(data) {
         data = this.splitData(data).map(s => Number(s))
-        nowObj.vt.push(data.slice(0, 3))
+        allVtn.vt.push(data.slice(0, 3))
     }
     vn(data) {
         data = this.splitData(data).map(s => Number(s))
-        nowObj.vn.push(data.slice(0, 3))
+        allVtn.vn.push(data.slice(0, 3))
     }
     f(data) {
         const v = [], vt = [], vn = []
@@ -85,9 +87,9 @@ export default class OBJLoader {
         nowObj.f.push({ v, vt, vn, usemtl: nowUsemtl })
 
         function _addVertex(d) {
-            d[0] && v.push(nowObj.v[d[0] - 1])
-            d[1] && vt.push(nowObj.vt[d[1] - 1])
-            d[2] && vn.push(nowObj.vn[d[2] - 1])
+            d[0] && v.push(allVtn.v[d[0] - 1])
+            d[1] && vt.push(allVtn.vt[d[1] - 1])
+            d[2] && vn.push(allVtn.vn[d[2] - 1])
         }
     }
     // 以下为mtl文件相关属性
