@@ -47,7 +47,7 @@ function invertMatrix(te) {
             }
             let num = mt[row][row]
             for (let downRow = row + 1; downRow < factorial; downRow++) {
-                if (mt[downRow][row] != 0) {
+                if (!isZero(mt[downRow][row])) {
                     let k = -mt[downRow][row] / num
                     _multiplyRow(downRow, row, k)
                 }
@@ -59,7 +59,7 @@ function invertMatrix(te) {
     //对角线归一
     function _step2() {
         for (let row = 0; row < factorial; row++) {
-            if (mt[row][row] != 1) {
+            if (!isOne(mt[row][row])) {
                 _multiplyNum(row, 1 / mt[row][row])
             }
         }
@@ -70,7 +70,7 @@ function invertMatrix(te) {
         for (let row = factorial - 1; row > 0; row--) {
             let num = mt[row][row]
             for (let upRow = row - 1; upRow >= 0; upRow--) {
-                if (mt[upRow][row] != 0) {
+                if (!isZero(mt[upRow][row])) {
                     let k = -mt[upRow][row] / num
                     _multiplyRow(upRow, row, k)
                 }
@@ -79,9 +79,9 @@ function invertMatrix(te) {
     }
 
     function _moveRow(row) {
-        if (mt[row][row] == 0) {
+        if (isZero(mt[row][row])) {
             for (let i = row + 1; i < factorial; i++) {
-                if (mt[i][row] != 0) {
+                if (!isZero(mt[i][row])) {
                     _changeRow(row, i)
                     return true
                 }
@@ -156,6 +156,14 @@ function multiplyComplex() {
             w: w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2
         }
     }
+}
+
+function isZero(num) {
+    return Math.abs(num) <= 0.000001
+}
+
+function isOne(num) {
+    return isZero(num - 1)
 }
 
 function generateUUID() {

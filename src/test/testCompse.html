@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        #canvas {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+</body>
+<canvas id="canvas"></canvas>
+<script id="vertexShader" type="x-shader/x-vertex">
+    attribute vec4 a_Position;
+    uniform mat4 u_MMatrix;
+    void main() {
+        gl_Position = u_MMatrix * a_Position;
+    }
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+    precision mediump float;
+    void main() {
+        gl_FragColor = vec4(1, 0, 0, 1);
+    }
+</script>
+<script type="module">
+    import Quaternion from '../math/Quaternion.js'
+    import Matrix4 from '../math/Matrix4.js'
+    import Vector3 from '../math/Vector3.js'
+    import Camera1 from '../cameras/Camera.js'
+    import { Camera } from './js/three.module.js'
+    import { printMtrix } from '../math/MathUtils.js'
+    import { initShaders, enableVertexAttribArray, setUniform } from './js/Utils.js'
+
+    const canvas = document.getElementById('canvas')
+    const vSource = document.querySelector('#vertexShader').innerText
+    const fSource = document.querySelector('#fragmentShader').innerText
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+
+    const gl = canvas.getContext('webgl')
+
+    gl.clearColor(0.8, 0.8, 0.8, 1) //背景色
+    gl.clear(gl.COLOR_BUFFER_BIT) //填充背景色
+
+    gl.enable(gl.BLEND) //开启混合
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA) //定义混合像素算法的函数
+    gl.enable(gl.DEPTH_TEST);
+
+    initShaders(gl, vSource, fSource)
+
+    const vertexs = new Float32Array([
+        0, 0.1,
+        -0.1, -0.1,
+        0.1, -0.1
+    ])
+    // const camera = new Camera1()
+    const camera = new Camera()
+    // camera1.position.copy(new Vector3(1, 1, 0))
+    // camera1.lookAt(new Vector3(0, 0, 0))
+    // camera1.updateWorldMatrix(true)
+
+    camera.position.copy(new Vector3(0.5, 0.5, 0.5))
+    camera.lookAt(new Vector3(-0.5, 0, 0))
+    camera.updateWorldMatrix(true)
+
+    // let matrix1 = camera1.matrixWorldInverse.clone()
+    let matrix = camera.matrixWorldInverse.clone()
+
+    printMtrix(matrix)
+
+    // const q = new Quaternion().setFromAxisAngle(new Vector3(0, 0, 1), Math.PI / 4)
+    // const s = new Vector3(1, 1, 1)
+    // const p = new Vector3(0.2, 0, 0)
+    // const matrix = new Matrix4().compose(p, q, s)
+
+    let q = new Quaternion()
+    let s = new Vector3()
+    let p = new Vector3()
+
+    matrix.decompose(p, q, s)
+
+    console.log(p)
+    console.log(q)
+    console.log(s)
+
+    matrix = new Matrix4().compose(p, q, s)
+
+    printMtrix(matrix)
+
+    enableVertexAttribArray(gl, 'a_Position', vertexs, 2)
+    setUniform(gl, 'u_MMatrix', 'uniformMatrix4fv', [false, matrix.elements])
+
+    gl.drawArrays(gl.TRIANGLES, 0, 3)
+</script>
+
+</html>
