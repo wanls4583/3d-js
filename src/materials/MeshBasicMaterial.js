@@ -41,7 +41,7 @@ export default class MeshBasicMaterial extends Material {
         super(defaultVertexShader, defaultFragmentShader)
 
         this.uniforms.color = {
-            data: [1, 1, 1, 1],
+            data: [1, 0, 0, 1],
             type: 'uniform4f'
         }
     }

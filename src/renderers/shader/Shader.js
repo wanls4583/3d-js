@@ -47,6 +47,7 @@ export default class Shader {
         const attr = gl.getAttribLocation(gl.program, prop)
         if(attr > -1) {
             gl.vertexAttribPointer(attr, size, gl.FLOAT, false, stride, startIndex)
+            gl.enableVertexAttribArray(attr)
         }
     }
     setAtribute(prop, type) {

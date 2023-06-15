@@ -8,12 +8,12 @@ export default class WebGLRenderer {
     }
     init() {
         this.domElement = document.createElement('canvas')
-        this.gl = this.domElement.getContext('webgl')
-        this.shader = new Shader(this.gl)
     }
     setSize(width, height) {
         this.domElement.width = width
         this.domElement.height = height
+        this.domElement.style.width = width + 'px'
+        this.domElement.style.height = height + 'px'
         this.gl = this.domElement.getContext('webgl')
         this.shader = new Shader(this.gl)
     }
@@ -25,6 +25,7 @@ export default class WebGLRenderer {
         this.gl.enable(this.gl.DEPTH_TEST)
 
         scene.updateWorldMatrix(false, true)
+        camera.updateWorldMatrix()
         _getRenderList(scene)
 
         for (let i = 0; i < renderList.length; i++) {
@@ -54,23 +55,37 @@ export default class WebGLRenderer {
         this.shader.uniformMatrix4fv('projectMatrix', new Float32Array(camera.projectionMatrix.elements))
         this.shader.uniformMatrix4fv('viewMatrix', new Float32Array(camera.matrixWorldInverse.elements))
         this.shader.uniformMatrix4fv('modelMatrix', new Float32Array(mesh.matrixWorld.elements))
-        this.gl.drawArrays(this.gl.TRIANGLES, 0, mesh.geometry.attributes.position.data.length / 3)
+
+        let position = mesh.geometry.attributes.position
+
+        this.gl.drawArrays(this.gl.TRIANGLES, 0, position.data.length / position.size)
     }
     setAttributes(geometry) {
         const { attributes } = geometry
 
-        if(geometry.bufferData) {
+
+        if (geometry.bufferData) {
             this.shader.bindBuffer(geometry.bufferData)
         } else {
+            let position = attributes.position
             let data = []
             let offset = 0
-            Object.entries(attributes).forEach(item => {
-                item[1].offset = offset
-                offset += item[1].size * Float32Array.BYTES_PER_ELEMENT
-                data = data.concat(item[1].data)
+            let keys = Object.keys(attributes)
+
+            for (let i = 0, len = position.data.length / position.size; i < len; i++) {
+                keys.forEach(key => {
+                    let attr = attributes[key]
+                    data.push(...attr.data.slice(i * attr.size, (i + 1) * attr.size))
+                })
+            }
+            keys.forEach(key => {
+                let attr = attributes[key]
+                attr.offset = offset
+                offset += attr.size * Float32Array.BYTES_PER_ELEMENT
             })
-            Object.entries(attributes).forEach(item => {
-                item[1].stride = offset
+            keys.forEach(key => {
+                let attr = attributes[key]
+                attr.stride = offset
             })
             geometry.bufferData = this.shader.setBufferData(new Float32Array(data))
         }
@@ -84,7 +99,7 @@ export default class WebGLRenderer {
 
         for (let key in uniforms) {
             let attr = uniforms[key]
-            this.shader[attr.type](...attr.data)
+            this.shader[attr.type](key, ...attr.data)
         }
     }
 }

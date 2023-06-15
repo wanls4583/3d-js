@@ -27,14 +27,14 @@ export default class BoxGeometry extends BufferGeometry {
         //  |/      |/
         //  v0------v1
         const position = [
-            [-1, -1, 1], //v0
-            [1, -1, 1], //v1
-            [1, 1, 1], //v2
-            [-1, 1, 1], //v3
-            [1, -1, -1], //v4
-            [-1, -1, -1], //v5
-            [-1, 1, -1], //v6
-            [1, 1, -1], //v7
+            [-0.5, -0.5, 0.5], //v0
+            [0.5, -0.5, 0.5], //v1
+            [0.5, 0.5, 0.5], //v2
+            [-0.5, 0.5, 0.5], //v3
+            [0.5, -0.5, -0.5], //v4
+            [-0.5, -0.5, -0.5], //v5
+            [-0.5, 0.5, -0.5], //v6
+            [0.5, 0.5, -0.5], //v7
         ]
 
         _buildPlane.call(this, position[0], position[1], position[2], position[3], [0, 0, 1]) //前
@@ -52,6 +52,11 @@ export default class BoxGeometry extends BufferGeometry {
             this.attributes.position.data.push(...v3)
             this.attributes.position.data.push(...v4)
 
+            this.attributes.normal.data.push(...normal)
+            this.attributes.normal.data.push(...normal)
+            this.attributes.normal.data.push(...normal)
+            this.attributes.normal.data.push(...normal)
+            this.attributes.normal.data.push(...normal)
             this.attributes.normal.data.push(...normal)
 
             this.attributes.uv.data.push(0, 0)

@@ -35,7 +35,7 @@
 
     renderer.setSize(window.innerWidth, window.innerHeight)
     document.body.appendChild(renderer.domElement)
-    camera.position.z = 5;
+    camera.position.set(2, 2, 5)
 
     const geo = new BoxGeometry(1, 1, 1)
     const material = new MeshBasicMaterial({ color: 0x00ff00 })
@@ -44,9 +44,9 @@
     scene.add(cube)
     renderer.render(scene, camera)
 
-    printMtrix(camera.matrixWorldInverse, 'matrixWorldInverse')
-    printMtrix(camera.projectionMatrix, 'projectionMatrix')
-    printMtrix(cube.matrixWorld, 'cube')
+    // printMtrix(camera.matrixWorldInverse, 'matrixWorldInverse')
+    // printMtrix(camera.projectionMatrix, 'projectionMatrix')
+    // printMtrix(cube.matrixWorld, 'cube')
 </script>
 
 </html>
