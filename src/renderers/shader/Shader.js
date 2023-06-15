@@ -1,35 +1,8 @@
-const defaultVertexShader = `
-attribute vec4 a_Position;
-attribute vec4 a_Color;
-uniform mat a_ProjectMatrix;
-uniform mat a_ViewMatrix;
-uniform mat a_ModelMatrix;
-varying vec4 v_Position;
-varying vec4 v_Color;
-#define VERTEX_HEADER
-void main() {
-    gl_Position = a_ProjectMatrix * a_ViewMatrix * a_ModelMatrix * a_Position;
-    v_Position = gl_Position;
-    v_Color = a_Color;
-    #define VERTEX_MAIN
-}
-`
-
-const defaultFragmentShader = `
-varying vec4 v_Position;
-varying vec4 v_Color;
-#define FRAGMENT_HEADER
-void main() {
-    gl_FragColor = v_Color;
-    #define FRAGMENT_MAIN
-}
-`
-
 export default class Shader {
     constructor(gl) {
         this.gl = gl
     }
-    createProgram(vSource = defaultVertexShader, fSource = defaultFragmentShader) {
+    createProgram(vSource, fSource) {
         const gl = this.gl
         const program = gl.createProgram()
         const vertexShader = _loaderShader(gl, gl.VERTEX_SHADER, vSource)
@@ -37,6 +10,12 @@ export default class Shader {
         gl.attachShader(program, vertexShader)
         gl.attachShader(program, fragmentShader)
         gl.linkProgram(program)
+
+        let vertexShaderError = gl.getShaderInfoLog(vertexShader)
+        let fragmentShaderError = gl.getShaderInfoLog(fragmentShader)
+
+        vertexShaderError && console.error('vertexShader error:\n', vertexShaderError)
+        fragmentShaderError && console.error('fragmentShader error:\n', fragmentShaderError)
 
         return program
 
@@ -47,6 +26,10 @@ export default class Shader {
 
             return shader
         }
+    }
+    useProgram(program) {
+        this.gl.useProgram(program)
+        this.gl.program = program
     }
     setBufferData(vertexs) {
         const gl = this.gl
@@ -59,28 +42,34 @@ export default class Shader {
     bindBuffer(vertexBuffer) {
         this.gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer)
     }
-    vertextAttribPointer(prop, size, categorySize = 0, startIndex = 0) {
+    vertexAttribPointer(prop, size, stride = 0, startIndex = 0) {
         const gl = this.gl
         const attr = gl.getAttribLocation(gl.program, prop)
-        gl.vertextAttribPointer(attr, size, gl.FLOAT, false, categorySize, startIndex)
+        if(attr > -1) {
+            gl.vertexAttribPointer(attr, size, gl.FLOAT, false, stride, startIndex)
+        }
     }
     setAtribute(prop, type) {
         const gl = this.gl
         const u = gl.getAttribLocation(gl.program, prop)
-        const arr = []
-        for (let i = 2; i < arguments.length; i++) {
-            arr.push(arguments[i])
+        if(u > -1) {
+            const arr = []
+            for (let i = 2; i < arguments.length; i++) {
+                arr.push(arguments[i])
+            }
+            gl[type](u, ...arr)
         }
-        gl[type](u, ...arr)
     }
     setUniform(prop, type) {
         const gl = this.gl
         const u = gl.getUniformLocation(gl.program, prop)
-        const arr = []
-        for (let i = 2; i < arguments.length; i++) {
-            arr.push(arguments[i])
+        if(u > -1) {
+            const arr = []
+            for (let i = 2; i < arguments.length; i++) {
+                arr.push(arguments[i])
+            }
+            gl[type](u, ...arr)
         }
-        gl[type](u, ...arr)
     }
     vertexAttrib4f(prop, a, b, c, d) {
         this.setAtribute(prop, 'vertexAttrib4f', a, b, c, d)

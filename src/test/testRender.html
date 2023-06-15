@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        #canvas {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+</body>
+<script type="module">
+    import Scene from '../scenes/Scene.js';
+    import PerspectiveCamera from '../cameras/PerspectiveCamera.js';
+    import WebGLRenderer from '../renderers/WebGLRenderer.js';
+    import MeshBasicMaterial from '../materials/MeshBasicMaterial.js';
+    import BoxGeometry from '../geometries/BoxGeometry.js';
+    import Mesh from '../objects/Mesh.js';
+
+    const scene = new Scene()
+    const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+    const renderer = new WebGLRenderer()
+
+    renderer.setSize(window.innerWidth, window.innerHeight)
+    document.body.appendChild(renderer.domElement)
+    camera.position.z = 5;
+
+    const geo = new BoxGeometry(1, 1, 1)
+    const material = new MeshBasicMaterial({ color: 0x00ff00 })
+    const cube = new Mesh(geo, material)
+
+    scene.add(cube)
+    renderer.render(scene, camera)
+</script>
+
+</html>

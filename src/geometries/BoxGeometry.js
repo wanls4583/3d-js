@@ -1,12 +1,21 @@
-import BufferGeometry from "../core/BufferGeometry";
+import BufferGeometry from "../core/BufferGeometry.js";
 
 export default class BoxGeometry extends BufferGeometry {
     constructor() {
         super()
-        this.indices = []
-        this.vertices = []
-        this.normals = []
-        this.uvs = []
+
+        this.attributes.position = {
+            data: [],
+            size: 3
+        }
+        this.attributes.normal = {
+            data: [],
+            size: 3
+        }
+        this.attributes.uv = {
+            data: [],
+            size: 2
+        }
         this.init()
     }
     init() {
@@ -17,7 +26,7 @@ export default class BoxGeometry extends BufferGeometry {
         //  | |v5---|-|v4
         //  |/      |/
         //  v0------v1
-        const vertices = [
+        const position = [
             [-1, -1, 1], //v0
             [1, -1, 1], //v1
             [1, 1, 1], //v2
@@ -28,29 +37,29 @@ export default class BoxGeometry extends BufferGeometry {
             [1, 1, -1], //v7
         ]
 
-        _buildPlane.call(this, vertices[0], vertices[1], vertices[2], vertices[3]) //前
-        _buildPlane.call(this, vertices[1], vertices[4], vertices[7], vertices[2]) //右
-        _buildPlane.call(this, vertices[4], vertices[5], vertices[6], vertices[7]) //后
-        _buildPlane.call(this, vertices[5], vertices[0], vertices[3], vertices[6]) //左
-        _buildPlane.call(this, vertices[3], vertices[2], vertices[7], vertices[6]) //上
-        _buildPlane.call(this, vertices[5], vertices[4], vertices[1], vertices[0]) //下
+        _buildPlane.call(this, position[0], position[1], position[2], position[3], [0, 0, 1]) //前
+        _buildPlane.call(this, position[1], position[4], position[7], position[2], [1, 0, 0]) //右
+        _buildPlane.call(this, position[4], position[5], position[6], position[7], [0, 0, -1]) //后
+        _buildPlane.call(this, position[5], position[0], position[3], position[6], [-1, 0, 0]) //左
+        _buildPlane.call(this, position[3], position[2], position[7], position[6], [0, 1, 0]) //上
+        _buildPlane.call(this, position[5], position[4], position[1], position[0], [0, -1, 0]) //下
         
         function _buildPlane(v1, v2, v3, v4, normal) {
-            this.vertices.push(...v1)
-            this.vertices.push(...v2)
-            this.vertices.push(...v3)
-            this.vertices.push(...v1)
-            this.vertices.push(...v3)
-            this.vertices.push(...v4)
+            this.attributes.position.data.push(...v1)
+            this.attributes.position.data.push(...v2)
+            this.attributes.position.data.push(...v3)
+            this.attributes.position.data.push(...v1)
+            this.attributes.position.data.push(...v3)
+            this.attributes.position.data.push(...v4)
 
-            this.normals.push(...normal)
+            this.attributes.normal.data.push(...normal)
 
-            this.uvs.push(0, 0)
-            this.uvs.push(1, 0)
-            this.uvs.push(1, 1)
-            this.uvs.push(0, 0)
-            this.uvs.push(1, 1)
-            this.uvs.push(0, 1)
+            this.attributes.uv.data.push(0, 0)
+            this.attributes.uv.data.push(1, 0)
+            this.attributes.uv.data.push(1, 1)
+            this.attributes.uv.data.push(0, 0)
+            this.attributes.uv.data.push(1, 1)
+            this.attributes.uv.data.push(0, 1)
         }
     }
 }
