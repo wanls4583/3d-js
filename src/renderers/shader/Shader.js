@@ -63,7 +63,7 @@ export default class Shader {
     setUniform(prop, type) {
         const gl = this.gl
         const u = gl.getUniformLocation(gl.program, prop)
-        if(u > -1) {
+        if(u) {
             const arr = []
             for (let i = 2; i < arguments.length; i++) {
                 arr.push(arguments[i])
@@ -94,5 +94,8 @@ export default class Shader {
     }
     uniform1f(prop, a) {
         this.setUniform(prop, 'uniform1f', a)
+    }
+    uniformMatrix4fv(prop, a) {
+        this.setUniform(prop, 'uniformMatrix4fv', false, a)
     }
 }

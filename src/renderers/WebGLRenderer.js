@@ -51,7 +51,10 @@ export default class WebGLRenderer {
         this.shader.useProgram(program)
         this.setAttributes(mesh.geometry)
         this.setUniforms(mesh.material)
-        this.gl.drawArrays(this.gl.TRIANGLES, 0, mesh.geometry.attributes.position.length / 3)
+        this.shader.uniformMatrix4fv('projectMatrix', new Float32Array(camera.projectionMatrix.elements))
+        this.shader.uniformMatrix4fv('viewMatrix', new Float32Array(camera.matrixWorldInverse.elements))
+        this.shader.uniformMatrix4fv('modelMatrix', new Float32Array(mesh.matrixWorld.elements))
+        this.gl.drawArrays(this.gl.TRIANGLES, 0, mesh.geometry.attributes.position.data.length / 3)
     }
     setAttributes(geometry) {
         const { attributes } = geometry
@@ -69,7 +72,7 @@ export default class WebGLRenderer {
             Object.entries(attributes).forEach(item => {
                 item[1].stride = offset
             })
-            geometry.bufferData = this.shader.setBufferData(data)
+            geometry.bufferData = this.shader.setBufferData(new Float32Array(data))
         }
         for (let key in attributes) {
             let attr = attributes[key]

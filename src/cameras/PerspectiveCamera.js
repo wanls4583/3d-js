@@ -106,7 +106,7 @@ class PerspectiveCamera extends Camera {
             left += this.near * this.filmOffset / this.getFilmWidth()
         }
 
-        this.projectionMatrix.makeOrthographic(left, left + width, top, top - height, this.near, this.far)
+        this.projectionMatrix.makePerspective(left, left + width, top, top - height, this.near, this.far)
         this.projectionMatrixInverse.copy(this.projectionMatrix.clone().invert())
 
         return this

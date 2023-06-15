@@ -13,24 +13,21 @@
             padding: 0;
             overflow: hidden;
         }
-
-        #canvas {
-            width: 100%;
-            height: 100%;
-        }
     </style>
 </head>
 
 <body>
-
 </body>
 <script type="module">
+    import { printMtrix } from '../math/MathUtils.js'
     import Scene from '../scenes/Scene.js';
     import PerspectiveCamera from '../cameras/PerspectiveCamera.js';
     import WebGLRenderer from '../renderers/WebGLRenderer.js';
     import MeshBasicMaterial from '../materials/MeshBasicMaterial.js';
     import BoxGeometry from '../geometries/BoxGeometry.js';
     import Mesh from '../objects/Mesh.js';
+
+    // import { Scene, PerspectiveCamera, WebGLRenderer, MeshBasicMaterial, BoxGeometry, Mesh } from './js/three.module.js'
 
     const scene = new Scene()
     const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
@@ -46,6 +43,10 @@
 
     scene.add(cube)
     renderer.render(scene, camera)
+
+    printMtrix(camera.matrixWorldInverse, 'matrixWorldInverse')
+    printMtrix(camera.projectionMatrix, 'projectionMatrix')
+    printMtrix(cube.matrixWorld, 'cube')
 </script>
 
 </html>
