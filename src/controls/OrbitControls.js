@@ -1,4 +1,4 @@
-import { clamp } from '../math/MathUtils.js'
+import { clamp, DEG2RAD } from '../math/MathUtils.js'
 import Matrix4 from '../math/Matrix4.js'
 import Vector3 from '../math/Vector3.js'
 import Vector2 from '../math/Vector2.js'
@@ -39,10 +39,11 @@ export default class {
         this.zoom0 = this.camera.zoom
 
         const scope = this
-        const evnetMap = new Map([
-            [0, 'rotate'],
-            [2, 'pan']
-        ])
+        const eventType = {
+            rotate: 0,
+            scale: 1,
+            pan: 2,
+        }
         const PI2 = Math.PI * 2
 
         let state = -1
@@ -62,19 +63,19 @@ export default class {
             })
 
             domElement.addEventListener('pointerdown', e => {
-                state = evnetMap.get(e.button)
+                state = e.button == 0 ? eventType.rotate : eventType.pan
                 dragStart.set(e.clientX, e.clientY)
             })
 
             domElement.addEventListener('pointermove', e => {
                 dragEnd.set(e.clientX, e.clientY)
                 switch (state) {
-                    case 'pan':
+                    case eventType.pan:
                         if (scope.enablePan) {
                             _pan(dragEnd.clone().sub(dragStart).multiplyScalar(scope.panSpeed))
                         }
                         break
-                    case 'rotate':
+                    case eventType.rotate:
                         if (scope.enableRotate) {
                             if (useTrackBall) {
                                 _rotate2(dragEnd.clone().sub(dragStart).multiplyScalar(scope.rotateSpeed))
@@ -102,20 +103,34 @@ export default class {
         }
 
         function _pan({ x, y }) {
-            let cameraW = scope.camera.right - scope.camera.left
-            let cameraH = scope.camera.top - scope.camera.bottom
+            const camera = scope.camera
+
+            let { left, right, top, bottom } = scope.camera
+            let cameraW = right - left
+            let cameraH = top - bottom
+
+            if (camera.isPerspectiveCamera) {
+                let { fov, aspect } = camera
+                top = Math.tan(DEG2RAD * fov / 2) * camera.position.clone().sub(scope.target).length()
+                bottom = -top
+                right = top * aspect
+                left = -right
+                cameraW = right * 2
+                cameraH = top * 2
+            }
+
             let deltaX = (-cameraW / scope.domElement.clientWidth) * x
             let deltaY = (cameraH / scope.domElement.clientHeight) * y
-            let vx = new Vector3().setFromMatrixColumn(scope.camera.matrix, 0).multiplyScalar(deltaX)
+            let vx = new Vector3().setFromMatrixColumn(camera.matrix, 0).multiplyScalar(deltaX / camera.zoom)
             let vy = new Vector3()
             if (scope.screenSpacePanning) {
-                vy.setFromMatrixColumn(scope.camera.matrix, 1)
+                vy.setFromMatrixColumn(camera.matrix, 1)
             } else {
-                vy.setFromMatrixColumn(scope.camera.matrix, 2)
+                vy.setFromMatrixColumn(camera.matrix, 2)
             }
-            vy.multiplyScalar(deltaY)
+            vy.multiplyScalar(deltaY / camera.zoom)
             panOffset.copy(vx.add(vy))
-            scope.update()
+            scope.update(eventType.pan)
         }
 
         function _scale(zoomScale) {
@@ -125,8 +140,7 @@ export default class {
             } else {
                 scope.camera.position.lerp(scope.target, zoomScale - 1)
             }
-            scope.camera.updateProjectionMatrix()
-            scope.update()
+            scope.update(eventType.scale)
         }
 
         // 球坐标旋转
@@ -140,7 +154,7 @@ export default class {
                 spherical.phi -= (y / scope.domElement.clientHeight) * Math.PI * 2
                 spherical.phi = clamp(spherical.phi, scope.minPolarAngle, scope.maxPolarAngle)
             }
-            scope.update()
+            scope.update(eventType.rotate)
         }
 
         // 轨迹球旋转
@@ -155,31 +169,34 @@ export default class {
             let dir = scope.camera.position.clone().sub(scope.target).normalize()
             let axis = vx.add(vy).normalize().cross(dir)
             quaternion.setFromAxisAngle(axis, angle)
-            scope.update()
+            scope.update(eventType.rotate)
         }
 
-        this.update = function () {
-            //平移
-            this.target.add(panOffset)
-            this.camera.position.add(panOffset)
-
-            if (useTrackBall) {
-                //轨迹球旋转
-                let rotateOffset = this.camera.position.clone().sub(this.target).applyQuaternion(quaternion)
-                this.camera.up.applyQuaternion(quaternion)
-                this.camera.position.copy(this.target.clone().add(rotateOffset))
-            } else {
-                //球坐标旋转
-                let rotateOffset = new Vector3().setFromSpherical(spherical)
-                if (this.camera.isPerspectiveCamera) {
-                    spherical.radius = clamp(spherical.radius, this.minDistance, this.maxDistance)
-                }
-                this.camera.position.copy(this.target.clone().add(rotateOffset))
+        this.update = function (type) {
+            if (type === eventType.pan) {
+                //平移
+                this.target.add(panOffset)
+                this.camera.position.add(panOffset)
+                panOffset.set(0, 0, 0)
             }
-
-            panOffset.set(0, 0, 0)
-            spherical.setFromVector3(this.camera.position.clone().sub(this.target))
-            quaternion.setFromRotationMatrix(new Matrix4())
+            if (type === eventType.rotate) {
+                if (useTrackBall) {
+                    //轨迹球旋转
+                    let rotateOffset = this.camera.position.clone().sub(this.target).applyQuaternion(quaternion)
+                    this.camera.up.applyQuaternion(quaternion)
+                    this.camera.position.copy(this.target.clone().add(rotateOffset))
+                    quaternion.setFromRotationMatrix(new Matrix4())
+                } else {
+                    //球坐标旋转
+                    let rotateOffset = new Vector3().setFromSpherical(spherical)
+                    if (this.camera.isPerspectiveCamera) {
+                        spherical.radius = clamp(spherical.radius, this.minDistance, this.maxDistance)
+                    }
+                    this.camera.position.copy(this.target.clone().add(rotateOffset))
+                    spherical.setFromVector3(this.camera.position.clone().sub(this.target))
+                }
+            }
+            this.camera.lookAt(this.target)
         }
 
         this.saveState = function () {

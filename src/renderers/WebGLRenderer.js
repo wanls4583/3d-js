@@ -26,6 +26,7 @@ export default class WebGLRenderer {
 
         scene.updateWorldMatrix(false, true)
         camera.updateWorldMatrix()
+        camera.updateProjectionMatrix()
         _getRenderList(scene)
 
         for (let i = 0; i < renderList.length; i++) {
