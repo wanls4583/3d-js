@@ -44,7 +44,6 @@ export default class {
             scale: 1,
             pan: 2,
         }
-        const PI2 = Math.PI * 2
 
         let state = -1
         let dragStart = new Vector2()
@@ -153,13 +152,14 @@ export default class {
             if (scope.rotateDir.indexOf('y') > -1) {
                 spherical.phi -= (y / scope.domElement.clientHeight) * Math.PI * 2
                 spherical.phi = clamp(spherical.phi, scope.minPolarAngle, scope.maxPolarAngle)
+                spherical.phi = clamp(spherical.phi, 0.000001, Math.PI - 0.000001)
             }
             scope.update(eventType.rotate)
         }
 
         // 轨迹球旋转
         function _rotate2({ x, y }) {
-            let angle = new Vector2(x / scope.domElement.clientHeight, -y / scope.domElement.clientHeight).length() * PI2
+            let angle = new Vector2(x / scope.domElement.clientHeight, -y / scope.domElement.clientHeight).length() * Math.PI * 2
             let cameraW = scope.camera.right - scope.camera.left
             let cameraH = scope.camera.top - scope.camera.bottom
             let deltaX = (cameraW / scope.domElement.clientWidth) * x
