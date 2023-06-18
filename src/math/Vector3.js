@@ -116,6 +116,13 @@ class Vector3 {
     dot(vec3) {
         return this.x * vec3.x + this.y * vec3.y + this.z * vec3.z
     }
+    lerp(v, alpha) {
+        this.x += (v.x - this.x) * alpha;
+        this.y += (v.y - this.y) * alpha;
+        this.z += (v.z - this.z) * alpha;
+
+        return this;
+    }
     length() {
         return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z)
     }

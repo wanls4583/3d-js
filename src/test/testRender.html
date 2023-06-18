@@ -27,6 +27,7 @@
     import MeshBasicMaterial from '../materials/MeshBasicMaterial.js';
     import BoxGeometry from '../geometries/BoxGeometry.js';
     import Mesh from '../objects/Mesh.js';
+    import OrbitControls from '../controls/OrbitControls.js';
 
     // import { Scene, PerspectiveCamera, OrthographicCamera, WebGLRenderer, MeshBasicMaterial, BoxGeometry, Mesh } from './js/three.module.js'
 
@@ -45,11 +46,20 @@
     const cube = new Mesh(geo, material)
 
     scene.add(cube)
-    renderer.render(scene, camera)
 
-    printMtrix(camera.matrixWorld, 'matrixWorld')
-    printMtrix(camera.matrixWorldInverse, 'matrixWorldInverse')
-    printMtrix(camera.projectionMatrix, 'projectionMatrix')
+    const orbit = new OrbitControls(camera, renderer.domElement)
+
+    render()
+
+    function render() {
+        renderer.render(scene, camera)
+        requestAnimationFrame(() => {
+            render()
+        })
+    }
+    // printMtrix(camera.matrixWorld, 'matrixWorld')
+    // printMtrix(camera.matrixWorldInverse, 'matrixWorldInverse')
+    // printMtrix(camera.projectionMatrix, 'projectionMatrix')
     // printMtrix(cube.matrixWorld, 'cube')
 </script>
 

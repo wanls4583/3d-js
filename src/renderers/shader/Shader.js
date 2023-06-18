@@ -40,6 +40,7 @@ export default class Shader {
         return vertexBuffer
     }
     bindBuffer(vertexBuffer) {
+        const gl = this.gl
         this.gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer)
     }
     vertexAttribPointer(prop, size, stride = 0, startIndex = 0) {
