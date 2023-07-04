@@ -20,6 +20,7 @@
 </body>
 <script type="module">
     import { printMtrix } from '../math/MathUtils.js'
+    import Vector3 from '../math/Vector3.js';
     import Scene from '../scenes/Scene.js';
     import PerspectiveCamera from '../cameras/PerspectiveCamera.js';
     import OrthographicCamera from '../cameras/OrthographicCamera.js';
@@ -29,18 +30,20 @@
     import Mesh from '../objects/Mesh.js';
     import OrbitControls from '../controls/OrbitControls.js';
 
-    // import { Scene, PerspectiveCamera, OrthographicCamera, WebGLRenderer, MeshBasicMaterial, BoxGeometry, Mesh } from './js/three.module.js'
+
+    // import { Scene, PerspectiveCamera, OrthographicCamera, WebGLRenderer, MeshBasicMaterial, BoxGeometry, Mesh, Vector3 } from './js/three.module.js'
     // import { OrbitControls } from './js/OrbitControls.js';
 
     const scene = new Scene()
-    // const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-    const camera = new OrthographicCamera(-4, 4, 4, -4, 0.1, 100)
+    const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+    // const camera = new OrthographicCamera(-4, 4, 4, -4, 0.1, 100)
     const renderer = new WebGLRenderer()
+    const target = new Vector3(0, -2, 0)
 
     renderer.setSize(window.innerWidth, window.innerHeight)
     document.body.appendChild(renderer.domElement)
-    camera.position.set(2, 2, 5)
-    camera.lookAt(0, 0, 0)
+    camera.position.set(1, 0, 5)
+    // camera.lookAt(target) // target 将会被 orbit.target 覆盖
 
     const geo = new BoxGeometry(1, 1, 1)
     const material = new MeshBasicMaterial({ color: 0x00ff00 })
@@ -50,6 +53,8 @@
 
     const orbit = new OrbitControls(camera, renderer.domElement)
     orbit.enableDamping = false
+    orbit.target = target
+    orbit.update() // 摄像机位置或目标点改变后需要更新
 
     render()
 
